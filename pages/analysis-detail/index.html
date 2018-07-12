@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>解析详情</title>
+    <link href="https://cdn.bootcss.com/normalize/8.0.0/normalize.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/element-ui/2.3.8/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../common/style/common.css">
+    <link rel="stylesheet" href="analysis-detail.css">
+</head>
+<body>
+<div id="app" v-cloak>
+    <div class="main-container">
+        <div class="page-header clearfix">
+            <h1 class="header-title fll">{{subject}}</h1>
+            <el-button @click="checkScore" class="search-btn flr" size="large" type="primary">查看成绩</el-button>
+        </div>
+        <div class="content-container clearfix">
+            <div class="topic-nav fll">
+                <div class="topic-nav-header">
+                    <ul class="topic-icon-list clearfix">
+                        <li class="topic-icon-item fll">
+                            <i class="topic-icon in-bl todo"></i>
+                            <span class="topic-icon-text">未答</span>
+                        </li>
+                        <li class="topic-icon-item fll">
+                            <i class="topic-icon in-bl correct"></i>
+                            <span class="topic-icon-text">正确</span>
+                        </li>
+                        <li class="topic-icon-item fll ">
+                            <i class="topic-icon in-bl wrong"></i>
+                            <span class="topic-icon-text">错误</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="topic-nav-content">
+                    <div class="topic-nav-item" v-for="topicType in topicList" :key="topicType.Type"
+                         v-if="topicType.TMBM.length>0">
+                        <h3 class="topic-nav-title">
+                            {{topicType.Type|zhCNTopicType}}
+                        </h3>
+                        <ul class="topic-type-list clearfix">
+                            <li class="topic-type-item fll"
+                                :class="{'current':topic.isCurrent}"
+                                @click="getTopicDetail(topic)"
+                                v-for="topic in topicType.TMBM" :key="topic.Id">
+                                <div class="topic" :class="topic.statClass">{{topic.rownum}}</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="topic-content">
+                <div class="content-header clearfix">
+                    <h3 class="topic-type-text fll">{{curItem.LeiXing|zhCNTopicType}}</h3>
+                    <a class="collect-btn flr" href="javascript:" @click="toggleCollection">
+                        <i :class="curItem.hasCollected?'el-icon-star-on':'el-icon-star-off'" class="collect-icon"></i>
+                        {{curItem.hasCollected?'取消收藏':'收藏'}}
+                    </a>
+                </div>
+                <div class="topic-item">
+                    <p class="topic-title">
+                        <span class="topic-index">{{curItem.rownum}}</span>.
+                        {{curItem.topicTitle}}
+                    </p>
+                    <!--单选-->
+                    <div class="topic-answer-panel" v-show="curItem.LeiXing==='0'">
+                        <ul class="topic-option-list">
+                            <li class="topic-option-item" v-for="(item,index) in curItem.topicOptionList"
+                                :key="item.Id">
+                                <el-radio @change="confirmHandler" v-model="curItem.selectedOption"
+                                          :label="item.Id">
+                                    {{String.fromCharCode(index+65)}}. {{item.Options}}
+                                </el-radio>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--多选-->
+                    <div class="topic-answer-panel" v-show="curItem.LeiXing==='1'">
+                        <ul class="topic-option-list">
+                            <li class="topic-option-item" v-for="(item,index) in curItem.topicOptionList"
+                                :key="item.Id">
+                                <el-checkbox v-model="curItem.selectedOption" :label="item.Id">
+                                    {{String.fromCharCode(index+65)}}. {{item.Options}}
+                                </el-checkbox>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--判断-->
+                    <div class="topic-answer-panel" v-show="curItem.LeiXing==='2'">
+                        <ul class="topic-option-list">
+                            <li class="topic-option-item" v-for="(item,index) in curItem.topicOptionList"
+                                :key="item.Id">
+                                <el-radio @change="confirmHandler" v-model="curItem.selectedOption"
+                                          :label="item.Id">
+                                    {{item.Options}}
+                                </el-radio>
+                            </li>
+                        </ul>
+                    </div>
+                    <!--填空题-->
+                    <div class="topic-answer-panel" v-show="curItem.LeiXing==='3'">
+                        <el-input v-for="item in curItem.fillBlank" :key="item.Id" v-model="item.Answer"
+                                  class="fill-input"></el-input>
+                    </div>
+                    <!--简答-->
+                    <div class="topic-answer-panel" v-show="curItem.LeiXing==='4'">
+                        <el-input
+                                type="textarea"
+                                :rows="5"
+                                placeholder="请输入内容"
+                                v-model="curItem.textarea">
+                        </el-input>
+                    </div>
+                </div>
+                <div class="analysis-content" v-show="showAnalysis">
+                    <div class="correct-answer" v-if="showCorrectAnswer">
+                        正确答案：{{curItem.correctAnswer|toCharCode}}
+                    </div>
+                    <div class="analysis-detail">
+                        <h3 class="detail-title">解析</h3>
+                        <p class="analysis-text">{{curItem.analysisText}}</p>
+                    </div>
+                    <div class="point-content" hidden>
+                        <h3 class="point-title">考点</h3>
+                        <p class="point-text">{{curItem.pointText}}</p>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <el-button @click="toQuestion(-1)">上一题</el-button>
+                    <el-button @click="toQuestion(1)">下一题</el-button>
+                    <el-button type="success" v-show="!(curItem.LeiXing==='0'||curItem.LeiXing==='2')" :disabled="curItem.hasDone" @click="confirmHandler">确认</el-button>
+                    <el-button type="primary" @click="submitHandler">提交答题</el-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.3.8/index.js"></script>
+<script>
+    var vm = new Vue({
+        data: function () {
+            return {
+                subject: '结果报告：2014年4月人力资源开发与管理真题',
+                topicList: [],//题库
+                // topicTitle: '',// 题目
+                // topicOptionList: [],//选项
+                curItem: {},// 当前题对象
+                // topicType: '', // 题目类型
+                // selectedOption: [],// 当前选择,对应单选、多选、判断
+                // textarea: '',// 论述题
+                // fillBlank: [],// 填空
+                // correctAnswer: '',
+                // analysisText: '',
+                pointText: '',//暂无
+                showAnalysis: false,
+                initTime: ''
+            }
+        },
+        computed: {
+            getAllTopic: function () {
+                return this.topicList.reduce(function (prev, cur) {
+                    return prev.concat(cur.TMBM)
+                }, []);
+            },
+            showCorrectAnswer: function () {
+                return this.curItem.LeiXing === '0' || this.curItem.LeiXing === '1' || this.curItem.LeiXing === '2'
+            }
+        },
+        methods: {
+            getTopicDetail: function (topic) {
+                var _this = this;
+                _this.showAnalysis = false;
+                _this.getAllTopic.forEach(function (val) {
+                    val.isCurrent = false;
+                });
+                topic.isCurrent = true;
+                _this.curItem = topic;
+                var c = _this.curItem;
+                if (c.hasDone) {
+                    _this.showAnalysis = true;
+                } else {
+                    var data = _this.getTopicData();
+                    _this.setTopicData(c, data);
+                }
+            },
+            loadTopicData: function () {
+                var _this = this;
+                _this.getAllTopic.forEach(function (val) {
+                    val.hasDone = true;
+                })
+            },
+            setTopicData: function (topic, data) {
+                topic.topicTitle = data.data[0].Title;
+                topic.analysisText = data.data[0].Analysis;
+                switch (topic.LeiXing) {
+                    case '0':
+                    case '1':
+                    case '2':
+                        topic.correctAnswer =
+                            data.data
+                                .filter(function (val) {
+                                    return val.IsRight === '1';
+                                })
+                                .map(function (val) {
+                                    return {
+                                        val: val.Id,
+                                        idx: val.rownum - 1
+                                    };
+                                });
+                        topic.topicOptionList = data.data;
+                        break;
+                    case  '3':
+                        topic.fillBlank = data.data;
+                        break;
+                    case  '4':
+                        topic.textarea = data.data[0].Answer;
+                        break;
+                }
+            },
+            toQuestion: function (dir) {
+                var _this = this;
+                var l = _this.getAllTopic.length;
+                var i = _this.curItem.rownum - 1 + dir;
+                if (i >= 0 && i < l) {
+                    _this.getTopicDetail(_this.getAllTopic[i]);
+                } else if (i < 0) {
+                    ELEMENT.MessageBox('已是第一道题目');
+                } else {
+                    ELEMENT.MessageBox('已做完全部题目');
+                }
+            },
+            getTopicList: function () {
+                var _this = this;
+                var list = [
+                    {
+                        "Type": '0',
+                        "TMBM": [{"rownum": 1, "Id": "3800", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 2,
+                            "Id": "3801",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 3, "Id": "3802", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 4,
+                            "Id": "3803",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 5, "Id": "3804", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 6,
+                            "Id": "3805",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 7, "Id": "3806", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 8,
+                            "Id": "3807",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 9, "Id": "3808", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 10,
+                            "Id": "3809",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 11, "Id": "3810", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 12,
+                            "Id": "3811",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 13, "Id": "3812", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 14,
+                            "Id": "3813",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 15, "Id": "3814", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 16,
+                            "Id": "3815",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }]
+                    }, {"Type": '1', "TMBM": [{"rownum": 17, "Id": "3816", "ExamId": 97, "LeiXing": '1'}]}, {
+                        "Type": '2',
+                        "TMBM": []
+                    }, {
+                        "Type": '3',
+                        "TMBM": [
+                            {"rownum": 18, "Id": "3817", "ExamId": 97, "LeiXing": '3'}, {
+                                "rownum": 19,
+                                "Id": "3818",
+                                "ExamId": 97,
+                                "LeiXing": '3'
+                            }, {"rownum": 20, "Id": "3819", "ExamId": 97, "LeiXing": '3'}, {
+                                "rownum": 21,
+                                "Id": "3820",
+                                "ExamId": 97,
+                                "LeiXing": '3'
+                            }, {"rownum": 22, "Id": "3821", "ExamId": 97, "LeiXing": '3'}
+                        ]
+                    }, {
+                        "Type": '4',
+                        "TMBM": [
+                            {"rownum": 23, "Id": "3822", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 24,
+                                "Id": "3823",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 25, "Id": "3824", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 26,
+                                "Id": "3825",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 27, "Id": "3826", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 28,
+                                "Id": "3827",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 29, "Id": "3828", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 30,
+                                "Id": "3829",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 31, "Id": "3830", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 32,
+                                "Id": "3831",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 33, "Id": "3832", "ExamId": 97, "LeiXing": '4'}
+                        ]
+                    }
+                ];
+                list.forEach(function (value, index) {
+                    value.TMBM.forEach(function (v, i) {
+                        v.statClass = 'todo';
+                        v.isCurrent = 0 === i === index;
+                        v.hasDone = false;
+                        v.analysisText = '';
+                        v.hasCollected = false;
+                        switch (v.LeiXing) {
+                            case '0':
+                            case '1':
+                            case '2':
+                                v.selectedOption = [];
+                                v.topicOptionList = [];
+                                v.correctAnswer = [];
+                                break;
+                            case '3':
+                                v.fillBlank = [];
+                                break;
+                            case '4':
+                                v.textarea = '';
+                                break;
+                        }
+                    })
+                });
+                _this.topicList = list;
+            },
+            confirmHandler: function () {
+                var _this = this;
+                var c = _this.curItem;
+                _this.showAnalysis = true;
+                c.hasDone = true;
+                switch (c.LeiXing) {
+                    case  '0':
+                        if (c.correctAnswer[0].val === c.selectedOption) {
+                            c.statClass = 'correct';
+                        } else {
+                            c.statClass = 'wrong';
+                        }
+                        break;
+                    case  '1':
+                        var flag = false;
+                        if (c.correctAnswer.length === c.selectedOption.length) {
+                            if (
+                                c.selectedOption.every(function (val) {
+                                    return c.correctAnswer.indexOf(val) > -1;
+                                })
+                            ) {
+                                flag = true;
+                            }
+                        }
+                        if (flag) {
+                            c.statClass = 'correct';
+                        } else {
+                            c.statClass = 'wrong';
+                        }
+                        break;
+                    case '2':
+                        break;
+                    case  '3':
+                        c.statClass = 'correct';
+                        break;
+                    case  '4':
+                        c.statClass = 'correct';
+                        break;
+                }
+
+            },
+            submitHandler: function () {
+                var _this = this;
+                var totalTime = (new Date().getTime() - _this.initTime) / 60000;
+            },
+            getTopicData: function () {
+                var data = {
+                    "data": [{
+                        "rownum": "1",
+                        "Title": "工作分析的出发点是从岗位出发分析其内容、性质、关系、环境以及任职资格等，而不是分析在岗的人员如何。这一工作分析的原则称为(    )",
+                        "LeiXing": "0",
+                        "Analysis": "我是题目解析",
+                        "Answer": "我是答案",
+                        "Id": "8186",
+                        "Options": "岗位原则 ",
+                        "IsRight": "1",
+                        "ExamId": "97"
+                    }, {
+                        "rownum": "2",
+                        "Title": "工作分析的出发点是从岗位出发分析其内容、性质、关系、环境以及任职资格等，而不是分析在岗的人员如何。这一工作分析的原则称为(    )",
+                        "LeiXing": "0",
+                        "Analysis": "我是题目解析",
+                        "Answer": "我是答案",
+                        "Id": "8187",
+                        "Options": "目的原则 ",
+                        "IsRight": "0",
+                        "ExamId": "97"
+                    }, {
+                        "rownum": "3",
+                        "Title": "工作分析的出发点是从岗位出发分析其内容、性质、关系、环境以及任职资格等，而不是分析在岗的人员如何。这一工作分析的原则称为(    )",
+                        "LeiXing": "0",
+                        "Analysis": "我是题目解析",
+                        "Answer": "我是答案",
+                        "Id": "8188",
+                        "Options": "应用原则  ",
+                        "IsRight": "0",
+                        "ExamId": "97"
+                    }, {
+                        "rownum": "4",
+                        "Title": "工作分析的出发点是从岗位出发分析其内容、性质、关系、环境以及任职资格等，而不是分析在岗的人员如何。这一工作分析的原则称为(    )",
+                        "LeiXing": "0",
+                        "Analysis": "我是题目解析",
+                        "Answer": "我是答案",
+                        "Id": "8189",
+                        "Options": "科学原则",
+                        "IsRight": "0",
+                        "ExamId": "97"
+                    }],
+                    "message": "",
+                    "errorCode": "",
+                    "success": "true"
+                };
+                return data;
+            },
+            insertHistory: function (data) {
+
+            },
+            toggleCollection: function () {
+                var _this = this;
+                var c = _this.curItem;
+                if (c.hasCollected) {
+                    ELEMENT.MessageBox.confirm('确定取消收藏吗', {
+                        callback: function (action) {
+                            if (action === 'confirm') {
+                                c.hasCollected = !c.hasCollected;
+                            }
+                        }
+                    })
+                } else {
+                    c.hasCollected = !c.hasCollected;
+                }
+            },
+            checkScore: function () {
+
+            }
+        },
+        filters: {
+            zhCNTopicType: function (type) {
+                var rtn = '';
+                switch (type) {
+                    case '0':
+                        rtn = '单选题';
+                        break;
+                    case  '1':
+                        rtn = '多选题';
+                        break;
+                    case  '2':
+                        rtn = '判断题';
+                        break;
+                    case  '3':
+                        rtn = '填空题';
+                        break;
+                    case  '4':
+                        rtn = '简答题';
+                        break;
+                }
+                return rtn;
+            },
+            toCharCode: function (val) {
+                return val.map(function (v) {
+                    return String.fromCharCode(v.idx + 65);
+                }).toString();
+            }
+        },
+        created: function () {
+            this.initTime = new Date().getTime();
+            this.getTopicList();
+            this.getTopicDetail(this.topicList[0].TMBM[0]);
+        }
+    }).$mount('#app');
+
+    window.onbeforeunload = function (event) {
+    };
+    window.onunload = function (event) {
+    };
+</script>
+</body>
+</html>

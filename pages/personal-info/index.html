@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息-个人资料</title>
+    <link href="https://cdn.bootcss.com/normalize/8.0.0/normalize.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/element-ui/2.3.8/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../common/style/common.css">
+    <link rel="stylesheet" href="personal-info.css">
+</head>
+<body>
+<div id="app" v-cloak>
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="个人资料" name="info">
+            <el-form :model="infoForm" label-width="140px" :rules="infoRules" class="clearfix">
+                <div class="fll in-bl form-left">
+                    <el-form-item label="姓名" prop="name">
+                        <el-input v-model="infoForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="性别" prop="gender">
+                        <el-radio v-model="infoForm.gender" label="1">男</el-radio>
+                        <el-radio v-model="infoForm.gender" label="2">女</el-radio>
+                    </el-form-item>
+                    <el-form-item label="年龄" prop="age">
+                        <el-input v-model="infoForm.age"></el-input>
+                    </el-form-item>
+                    <el-form-item label="昵称" prop="nickName">
+                        <el-input v-model="infoForm.nickName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机" prop="cellPhone">
+                        <el-input v-model="infoForm.cellPhone"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input v-model="infoForm.email"></el-input>
+                    </el-form-item>
+                    <el-form-item label="学历" prop="education">
+                        <el-input v-model="infoForm.education"></el-input>
+                    </el-form-item>
+                    <el-form-item label="毕业院校" prop="graduated">
+                        <el-input v-model="infoForm.graduated"></el-input>
+                    </el-form-item>
+                    <el-form-item label="工作年限" prop="experience">
+                        <el-input v-model="infoForm.experience"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary">提交修改</el-button>
+                    </el-form-item>
+                </div>
+                <div class="in-bl fll form-right">
+                    <el-upload rel="avatar"
+                               class="avatar-uploader"
+                               action=""
+                               :show-file-list="false"
+                               :on-success="handleAvatarSuccess"
+                               :before-upload="beforeAvatarUpload"
+                    >
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </div>
+            </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="收货地址" name="address">
+            <el-form :model="addressForm" label-width="140px" :rules="addressRules" class="clearfix">
+                <div class="fll in-bl form-left">
+                    <el-form-item label="详细地址">
+                        <el-select v-model="infoForm.province" class="address-province"></el-select>
+                        省/市
+                        <el-select v-model="infoForm.city" class="address-city"></el-select>
+                        市
+                    </el-form-item>
+                    <el-form-item prop="detail">
+                        <el-input v-model="infoForm.detail"></el-input>
+                    </el-form-item>
+                    <el-form-item label="收货人" prop="receiver">
+                        <el-input v-model="infoForm.receiver"></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="cellPhone">
+                        <el-input v-model="infoForm.cellPhone"></el-input>
+                    </el-form-item>
+                    <el-form-item label="地址标签" prop="tag">
+                        <el-input v-model="infoForm.tag"></el-input>
+                        <div class="tag-group">
+                            <el-button size="small" round>家</el-button>
+                            <el-button size="small" round>公司</el-button>
+                        </div>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-checkbox v-model="infoForm.toDefault">设为默认地址</el-checkbox>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary">添加新地址</el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="账户安全" name="security">
+            <el-form :model="securityForm" label-width="140px" :rules="securityRules" class="clearfix">
+                <div class="fll in-bl form-left">
+                    <el-form-item label="手机" prop="cellPhone">
+                        <!--<el-input v-model="securityForm.cellPhone" disabled></el-input>-->
+                        <span class="form-text in-bl">{{securityForm.cellPhone|encodePhone}}</span>
+                        <el-button @click="changePhoneDialog = true">修改</el-button>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <!--<el-input v-model="securityForm.password" type="password" disabled></el-input>-->
+                        <span class="form-text in-bl">********</span>
+                        <el-button @click="changePwdDialog=true">修改</el-button>
+                    </el-form-item>
+                    <el-form-item label="微信" prop="wechat">
+                        <!--<el-input v-model="securityForm.wechat" disabled></el-input>-->
+                        <span class="form-text in-bl">{{securityForm.wechat}}</span>
+                        <el-button @click="bindWeChatDialog=true">修改</el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </el-tab-pane>
+    </el-tabs>
+    <el-dialog title="更换手机号" close-on-click-modal="false" :visible.sync="changePhoneDialog" width="650px" center="true">
+        <el-form :model="changePhoneForm" label-width="80px" :rules="changePhoneRules"
+                 class="clearfix change-phone-form">
+            <el-form-item label="原手机号" prop="prevPhone">
+                <!--<el-input v-model="changePhoneForm.prevPhone" size="small"></el-input>-->
+                <span>{{changePhoneForm.prevPhone|encodePhone}}</span>
+            </el-form-item>
+            <el-form-item label="新手机号" prop="newPhone">
+                <el-input v-model="changePhoneForm.newPhone" size="small"></el-input>
+            </el-form-item>
+            <el-form-item label="验证码" prop="code">
+                <el-input v-model="changePhoneForm.code" size="small" class="change-phone-code in-bl"></el-input>
+                <el-button type="primary" size="small">获取验证码</el-button>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="changePhoneDialog = false" size="small" class="dialog-confirm">确 定
+            </el-button>
+        </div>
+    </el-dialog>
+    <el-dialog title="修改密码" close-on-click-modal="false" :visible.sync="changePwdDialog" width="650px" center="true">
+        <el-form :model="changePwdForm" label-width="100px" :rules="changePwdRules" class="clearfix change-phone-form">
+            <el-form-item label="登录手机号" prop="prevPhone">
+                <span>{{changePwdForm.signInPhone|encodePhone}}</span>
+            </el-form-item>
+            <el-form-item label="原密码" prop="prevPwd">
+                <el-input v-model="changePwdForm.prevPwd" size="small" type="password"
+                          class="change-phone-code in-bl"></el-input>
+                <el-button size="small">显示密码</el-button>
+            </el-form-item>
+            <el-form-item label="设置新密码" prop="newPwd">
+                <el-input v-model="changePwdForm.newPwd" size="small" type="password"
+                          class="change-phone-code in-bl"></el-input>
+                <el-button size="small">显示密码</el-button>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="changePwdDialog = false" size="small" class="dialog-confirm">确 定
+            </el-button>
+        </div>
+    </el-dialog>
+    <el-dialog title="绑定微信" close-on-click-modal="false" :visible.sync="bindWeChatDialog" width="450px" center="true">
+        <div class="qr-code in-bl">
+            <img src="" alt="">
+        </div>
+        <div class="qr-content in-bl">
+            <ol>
+                <li>课程推送</li>
+                <li>移动课表</li>
+                <li>公告通知</li>
+            </ol>
+            <p>等多精彩，等你来发现！</p>
+        </div>
+    </el-dialog>
+</div>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.3.8/index.js"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                activeName: 'info',
+                infoForm: {
+                    name: '',
+                    gender: '',
+                    age: '',
+                    nickName: '',
+                    cellPhone: '',
+                    email: '',
+                    education: '',
+                    graduated: '',
+                    experience: ''
+                },
+                infoRules: {
+                    name: {required: true},
+                    gender: {required: true},
+                    age: {required: true},
+                    nickName: {required: true},
+                    cellPhone: {required: true},
+                    email: {required: true},
+                    education: {required: true},
+                    graduated: {required: true},
+                    experience: {required: true}
+                },
+                addressForm: {
+                    province: '',
+                    city: '',
+                    detail: '',
+                    receiver: '',
+                    cellPhone: '',
+                    tag: '',
+                    toDefault: false
+                },
+                addressRules: {
+                    province: {required: true},
+                    city: {required: true},
+                    detail: {required: true},
+                    receiver: {required: true},
+                    cellPhone: {required: true},
+                    tag: {required: true}
+                },
+                securityForm: {
+                    cellPhone: '',
+                    password: '',
+                    wechat: ''
+                },
+                securityRules: {
+                    cellPhone: {required: true},
+                    password: {required: true},
+                    wechat: {required: true}
+                },
+                changePhoneForm: {
+                    prevPhone: '',
+                    newPhone: '',
+                    code: ''
+                },
+                changePhoneRules: {
+                    prevPhone: {required: true},
+                    newPhone: {required: true},
+                    code: {required: true}
+                },
+                changePwdForm: {
+                    signInPhone: '',
+                    prevPwd: '',
+                    newPwd: ''
+                },
+                changePwdRules: {
+                    signInPhone: {required: true},
+                    prevPwd: {required: true},
+                    newPwd: {required: true}
+                },
+                changePhoneDialog: false,
+                changePwdDialog: false,
+                bindWeChatDialog: false,
+                imageUrl: ''
+            }
+        },
+        methods: {
+            handleClick: function () {
+
+            },
+            handleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                // const isJPG = file.type === 'image/jpeg';
+                var isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isLt2M) {
+                    ELEMENT.MessageBox({message: '上传头像图片大小不能超过 2MB!', type: 'error'})
+                }
+                return isLt2M;
+            }
+        },
+        filters: {
+            encodePhone: function (val) {
+                return val;
+            }
+        },
+        mounted: function () {
+
+        },
+        created: function () {
+
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查看解析</title>
+    <link href="https://cdn.bootcss.com/normalize/8.0.0/normalize.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/element-ui/2.3.8/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../common/style/common.css">
+    <link rel="stylesheet" href="analysis-summary.css">
+</head>
+<body>
+<div id="app" v-cloak>
+    <div class="main-container">
+        <div class="page-header clearfix">
+            <div class="left-panel fll">
+                <h1 class="header-title">{{subject}}</h1>
+                <el-button type="primary" size="large" class="detail-btn">查看试题解析</el-button>
+            </div>
+            <div class="right-panel flr">
+                <span class="achieve-score">{{achieveScore}}分</span>
+                <span class="total-score">总分：{{totalScore}}</span>
+            </div>
+        </div>
+        <div class="topic-nav">
+            <div class="topic-nav-header clearfix">
+                <h3 class="topic-header-title fll">答题卡</h3>
+                <ul class="topic-icon-list flr clearfix">
+                    <li class="topic-icon-item fll">
+                        <i class="topic-icon in-bl todo"></i>
+                        <span class="topic-icon-text">未答</span>
+                    </li>
+                    <li class="topic-icon-item fll">
+                        <i class="topic-icon in-bl correct"></i>
+                        <span class="topic-icon-text">正确</span>
+                    </li>
+                    <li class="topic-icon-item fll ">
+                        <i class="topic-icon in-bl wrong"></i>
+                        <span class="topic-icon-text">错误</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="topic-nav-content">
+                <div class="topic-nav-item" v-for="topicType in topicList" :key="topicType.Type"
+                     v-if="topicType.TMBM.length>0">
+                    <h3 class="topic-nav-title">
+                        {{topicType.Type|zhCNTopicType}}
+                    </h3>
+                    <ul class="topic-type-list clearfix">
+                        <li class="topic-type-item fll"
+                            :class="{'current':topic.isCurrent}"
+                            @click="toAnalysisDetail(topic)"
+                            v-for="topic in topicType.TMBM" :key="topic.Id">
+                            <div class="topic" :class="topic.statClass">{{topic.rownum}}</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.3.8/index.js"></script>
+<script>
+    var vm = new Vue({
+        data: function () {
+            return {
+                subject: '结果报告：2014年4月人力资源开发与管理真题',
+                topicList: [],//题库
+                achieveScore: 90,
+                totalScore: 100
+            }
+        },
+        methods: {
+            getTopicList: function () {
+                var _this = this;
+                var list = [
+                    {
+                        "Type": '0',
+                        "TMBM": [{"rownum": 1, "Id": "3800", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 2,
+                            "Id": "3801",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 3, "Id": "3802", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 4,
+                            "Id": "3803",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 5, "Id": "3804", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 6,
+                            "Id": "3805",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 7, "Id": "3806", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 8,
+                            "Id": "3807",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 9, "Id": "3808", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 10,
+                            "Id": "3809",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 11, "Id": "3810", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 12,
+                            "Id": "3811",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 13, "Id": "3812", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 14,
+                            "Id": "3813",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }, {"rownum": 15, "Id": "3814", "ExamId": 97, "LeiXing": '0'}, {
+                            "rownum": 16,
+                            "Id": "3815",
+                            "ExamId": 97,
+                            "LeiXing": '0'
+                        }]
+                    }, {"Type": '1', "TMBM": [{"rownum": 17, "Id": "3816", "ExamId": 97, "LeiXing": '1'}]}, {
+                        "Type": '2',
+                        "TMBM": []
+                    }, {
+                        "Type": '3',
+                        "TMBM": [
+                            {"rownum": 18, "Id": "3817", "ExamId": 97, "LeiXing": '3'}, {
+                                "rownum": 19,
+                                "Id": "3818",
+                                "ExamId": 97,
+                                "LeiXing": '3'
+                            }, {"rownum": 20, "Id": "3819", "ExamId": 97, "LeiXing": '3'}, {
+                                "rownum": 21,
+                                "Id": "3820",
+                                "ExamId": 97,
+                                "LeiXing": '3'
+                            }, {"rownum": 22, "Id": "3821", "ExamId": 97, "LeiXing": '3'}
+                        ]
+                    }, {
+                        "Type": '4',
+                        "TMBM": [
+                            {"rownum": 23, "Id": "3822", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 24,
+                                "Id": "3823",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 25, "Id": "3824", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 26,
+                                "Id": "3825",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 27, "Id": "3826", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 28,
+                                "Id": "3827",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 29, "Id": "3828", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 30,
+                                "Id": "3829",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 31, "Id": "3830", "ExamId": 97, "LeiXing": '4'}, {
+                                "rownum": 32,
+                                "Id": "3831",
+                                "ExamId": 97,
+                                "LeiXing": '4'
+                            }, {"rownum": 33, "Id": "3832", "ExamId": 97, "LeiXing": '4'}
+                        ]
+                    }
+                ];
+                list.forEach(function (value, index) {
+                    value.TMBM.forEach(function (v, i) {
+                        v.statClass = 'todo';
+                        v.isCurrent = 0 === i === index;
+                        v.hasDone = false;
+                        v.analysisText = '';
+                        v.hasCollected = false;
+                        switch (v.LeiXing) {
+                            case '0':
+                            case '1':
+                            case '2':
+                                v.selectedOption = [];
+                                v.topicOptionList = [];
+                                v.correctAnswer = [];
+                                break;
+                            case '3':
+                                v.fillBlank = [];
+                                break;
+                            case '4':
+                                v.textarea = '';
+                                break;
+                        }
+                    })
+                });
+                _this.topicList = list;
+            },
+            toAnalysisDetail: function (topic) {
+
+            }
+        },
+        filters: {
+            zhCNTopicType: function (type) {
+                var rtn = '';
+                switch (type) {
+                    case '0':
+                        rtn = '单选题';
+                        break;
+                    case  '1':
+                        rtn = '多选题';
+                        break;
+                    case  '2':
+                        rtn = '判断题';
+                        break;
+                    case  '3':
+                        rtn = '填空题';
+                        break;
+                    case  '4':
+                        rtn = '简答题';
+                        break;
+                }
+                return rtn;
+            }
+        },
+        created: function () {
+            this.getTopicList();
+        }
+    }).$mount('#app');
+</script>
+</body>
+</html>

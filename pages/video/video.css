@@ -1,0 +1,393 @@
+/*页面头*/
+.header {
+    width: 100%;
+    height: 60px;
+}
+
+.header-content {
+    margin: 0 auto;
+    width: 1200px;
+    background: url("./img/logo.png") no-repeat;
+}
+
+.nav-list {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.nav-item {
+
+}
+
+.nav-btn {
+    margin: 10px;
+    padding: 0 15px;
+    height: 40px;
+    line-height: 40px;
+    color: #333333;
+    font-size: 16px;
+}
+
+.user-name {
+    margin-left: 5px;
+    vertical-align: top;
+    color: #198eee;
+}
+
+.logout {
+    color: #999999;
+}
+
+/*视频中间内容*/
+.video-container {
+    width: 100%;
+    height: 740px;
+    background: #1f1f1f;
+}
+
+.video-title-container {
+    height: 40px;
+    background: #292929;
+}
+
+.video-title {
+    margin: 0 auto;
+    width: 1200px;
+    height: 100%;
+    color: #cccccc;
+    font-size: 14px;
+    line-height: 40px;
+}
+
+/*播放器*/
+.video-content-container {
+    margin: 0 auto;
+    width: 1200px;
+    position: relative;
+    text-align: center;
+}
+
+.video-content {
+    width: 840px;
+    height: 700px;
+}
+
+/**/
+.video-btn-toolbar {
+    text-align: left;
+}
+
+.video-btn-toolbar a {
+    margin-right: 10px;
+    padding: 0 15px 0 35px;
+    height: 60px;
+    line-height: 60px;
+    color: #f5f5f5;
+}
+
+.btn-star {
+    background: url("./img/star.png") no-repeat;
+}
+
+.btn-test {
+    background: url("./img/test.png") no-repeat;
+}
+
+.btn-file {
+    background: url("./img/file.png") no-repeat;
+}
+
+/*右边栏*/
+.video-aside {
+    margin-left: -5px;
+    width: 360px;
+    height: 700px;
+    vertical-align: top;
+    overflow: hidden;
+    text-align: left;
+}
+
+/*教师窗口*/
+.teacher-window {
+    width: 360px;
+    height: 210px;
+    background: url("./img/teacher.png") no-repeat;
+}
+
+.tab-container {
+    margin-left: 1px;
+    height: 100%;
+    overflow: auto;
+}
+
+.tab-container .el-tabs__nav {
+    width: 100%;
+    background: #141414;
+}
+
+.tab-container .el-tabs__item {
+    width: 33.3%;
+    text-align: center;
+    font-size: 14px;
+}
+
+.el-tabs__header {
+    margin: 0;
+}
+
+.el-tabs__item {
+    color: #999999;
+}
+
+.tab-item {
+}
+
+.chat-list, .question-list {
+    padding: 15px 0 15px 20px;
+    height: 100%;
+    background: #242424;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+/*聊天列表*/
+.chat-item {
+    margin-bottom: 10px;
+}
+
+.chat-title {
+    font-size: 12px;
+    color: #999999;
+    line-height: 1.5;
+}
+
+.chat-text {
+    font-size: 14px;
+    color: #e5e5e5;
+    line-height: 2.5;
+}
+
+/*提问列表*/
+.question-item {
+    margin-bottom: 10px;
+}
+
+.question-title {
+    font-size: 12px;
+    color: #b2b2b2;
+    line-height: 1.67;
+}
+
+.question-content {
+    font-size: 14px;
+    color: #e5e5e5;
+    line-height: 1.67;
+}
+
+/*大纲列表*/
+.synopsis-list {
+    height: 100%;
+    background: #242424;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+.synopsis-item {
+    padding: 12px 0 12px 40px;
+}
+
+.synopsis-img {
+    width: 82px;
+    height: 62px;
+    border-radius: 4px;
+}
+
+.synopsis-content {
+    margin-left: 20px;
+    vertical-align: top;
+}
+
+.synopsis-title {
+    height: 30px;
+    line-height: 25px;
+    font-size: 14px;
+    color: #f5f5f5;
+}
+
+.synopsis-detail {
+    height: 25px;
+    line-height: 25px;
+    font-size: 12px;
+    color: #f5f5f5;
+}
+
+.synopsis-list .synopsis-active {
+    background: #333333 url("./img/play.png") no-repeat 15px center;
+}
+
+.collapse-video-aside {
+    position: absolute;
+    right: 345px;
+    top: 50%;
+    color: #ccc;
+    width: 16px;
+    height: 44px;
+    background: #424242;
+    line-height: 44px;
+    text-align: center;
+    border-radius: 0 4px 4px 0;
+}
+
+.expand-video-aside {
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    color: #ccc;
+    width: 16px;
+    height: 44px;
+    background: #424242;
+    line-height: 44px;
+    text-align: center;
+    border-radius: 4px 0 0 4px;
+}
+
+.collapse-video-aside:hover, .expand-video-aside:hover {
+    opacity: .7;
+}
+
+/*下方课程*/
+.course-list-container {
+
+}
+
+.course-list-content {
+    margin: 0 auto 100px;
+    width: 1200px;
+}
+
+.course-item {
+    padding-left: 35px;
+    height: 80px;
+    background: url("./img/course.png") no-repeat 0 5px;
+}
+
+.course-active {
+    background: url("./img/course-active.png") no-repeat 0 5px;
+}
+
+.course-active .course-num, .course-active .course-name {
+    color: #198eee;
+}
+
+.course-item:nth-child(even) {
+    background-color: #f3f5f7;
+}
+
+.course-num {
+    height: 40px;
+    line-height: 50px;
+    font-size: 14px;
+    color: #333333;
+}
+
+.course-text {
+    padding-right: 20px;
+    height: 40px;
+    line-height: 30px;
+    font-size: 14px;
+    color: #999999;
+    /*text-indent: 1em;*/
+}
+
+.course-name {
+}
+
+.course-time {
+    font-size: 12px;
+}
+
+/*页面脚*/
+/*.footer {*/
+    /*width: 100%;*/
+    /*height: 240px;*/
+    /*background: #444546;*/
+/*}*/
+
+/*.footer-content {*/
+    /*margin: 0 auto;*/
+    /*width: 1200px;*/
+    /*background: #444546;*/
+/*}*/
+
+/*.footer-top {*/
+    /*padding-top: 20px;*/
+    /*height: 140px;*/
+    /*box-sizing: border-box;*/
+    /*border-bottom: 1px dashed #999999;*/
+/*}*/
+
+/*.attach-brands {*/
+/*}*/
+
+/*.brands-title {*/
+    /*font-size: 18px;*/
+    /*color: #cccccc;*/
+/*}*/
+
+/*.brands-content {*/
+    /*width: 350px;*/
+    /*height: 71px;*/
+    /*background: url("./img/brands.png") no-repeat;*/
+/*}*/
+
+/*.connect-container {*/
+
+/*}*/
+
+/*.connect-content {*/
+    /*height: 32px;*/
+    /*line-height: 32px;*/
+/*}*/
+
+/*.connect-title {*/
+    /*margin-right: 15px;*/
+    /*font-size: 14px;*/
+    /*color: #cccccc;*/
+/*}*/
+
+/*.connect-link-content {*/
+/*}*/
+
+/*.connect-link {*/
+    /*padding: 0 5px;*/
+    /*font-size: 12px;*/
+    /*color: #999999;*/
+/*}*/
+
+/*.footer-bottom {*/
+    /*height: 100px;*/
+/*}*/
+
+/*.aside-link-title {*/
+    /*padding: 0 20px;*/
+    /*height: 55px;*/
+    /*line-height: 55px;*/
+/*}*/
+
+/*.link-title {*/
+    /*font-size: 14px;*/
+    /*color: #cccccc;*/
+/*}*/
+
+/*.aside-link-content {*/
+    /*height: 20px;*/
+    /*line-height: 20px;*/
+/*}*/
+
+/*.aside-link {*/
+    /*padding: 0 8px;*/
+    /*font-size: 12px;*/
+    /*color: #999999;*/
+
+/*}*/

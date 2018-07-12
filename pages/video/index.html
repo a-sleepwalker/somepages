@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>录播</title>
+    <link href="https://cdn.bootcss.com/normalize/8.0.0/normalize.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/element-ui/2.3.8/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="//g.alicdn.com/de/prismplayer/2.6.0/skins/default/aliplayer-min.css"/>
+    <link rel="stylesheet" href="../../common/style/common.css">
+    <link rel="stylesheet" href="video.css">
+    <link rel="stylesheet" href="../../test/footer.css">
+</head>
+<body>
+<div class="header">
+    <div class="header-content">
+        <ul class="nav-list clearfix">
+            <li class="nav-item flr">
+                <a href="javascript:" class="nav-btn in-bl logout">退出登录</a>
+            </li>
+            <li class="nav-item flr">
+                <a href="javascript:" class="nav-btn in-bl">
+                    <img class="user-img" src="./img/head.png" alt="">
+                    <span class="user-name in-bl">admin</span>
+                </a>
+            </li>
+            <li class="nav-item flr">
+                <a href="javascript:" class="nav-btn in-bl">个人中心</a>
+            </li>
+            <li class="nav-item flr">
+                <a href="javascript:" class="nav-btn in-bl">首页</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="app">
+    <div class="video-container">
+        <div class="video-title-container">
+            <div class="video-title">
+                {{video.name}}&nbsp;&nbsp;&nbsp;&nbsp;讲师：{{video.teacher}}
+            </div>
+        </div>
+        <div class="video-content-container">
+            <div class="video-content in-bl">
+                <div class="prism-player" id="J_prismPlayer"></div>
+                <div class="video-btn-toolbar">
+                    <a href="javascript:" class="in-bl btn-star">评分</a>
+                    <a href="javascript:" class="in-bl btn-test">随堂考</a>
+                    <a href="javascript:" class="in-bl btn-file">课件</a>
+                </div>
+            </div>
+            <div class="video-aside in-bl" v-if="showAside">
+                <div class="teacher-window" hidden></div>
+                <div class="tab-container">
+                    <el-tabs v-model="activeName" class="tab-item">
+                        <el-tab-pane label="公共聊天区" name="chat">
+                            <ul class="chat-list">
+                                <li class="chat-item" v-for="item in chatList" :key="item.id">
+                                    <p class="chat-title">{{item.name}}-{{item.major}}:({{item.classNum}})</p>
+                                    <p class="chat-text">{{item.text}}</p>
+                                </li>
+                            </ul>
+                        </el-tab-pane>
+                        <el-tab-pane label="提问区" name="question" class="tab-item">
+                            <ul class="question-list">
+                                <li class="question-item" v-for="(item,index) in questionList" :key="item.id">
+                                    <p class="question-title">{{index+1}}.{{item.title}}</p>
+                                    <p class="question-content">{{item.content}}</p>
+                                </li>
+                            </ul>
+                        </el-tab-pane>
+                        <el-tab-pane label="课程大纲" name="synopsis" class="tab-item">
+                            <ul class="synopsis-list">
+                                <li class="synopsis-item" :class="item.active?'synopsis-active':''"
+                                    v-for="item in synopsisList" :key="item.id">
+                                    <img class="synopsis-img in-bl" :src="item.src" :alt="item.text"/>
+                                    <div class="synopsis-content in-bl">
+                                        <p class="synopsis-title">{{item.title}}</p>
+                                        <p class="synopsis-detail">{{item.detail}}</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </el-tab-pane>
+                    </el-tabs>
+                </div>
+            </div>
+            <a href="javascript:" @click="showAside=!showAside;"
+               :class="showAside?['collapse-video-aside','el-icon-arrow-right']:['expand-video-aside','el-icon-arrow-left']"></a>
+        </div>
+    </div>
+    <div class="course-list-container">
+        <div class="course-list-content">
+            <ul class="course-list">
+                <li class="course-item" :class="{'course-active':item.iscur}" v-for="item in courseList" :key="item.id"
+                    @click="changeActive(item)">
+                    <p class="course-num">{{item.num}}</p>
+                    <p class="course-text clearfix">
+                        <span class="course-name">{{item.name}}</span>
+                        <span class="course-time flr">{{item.time}}</span>
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="footer_enjoy">
+    <div class="footer-top">
+        <div class="footer">
+            <div class="foot_left fll">
+                <h3 class="bot_ac">旗下品牌</h3>
+                <ul class="clearfix cooper_icon">
+                    <li><a href="/zx/xq1267/" target="_blank">
+                        <img src="./image/bottom_1.jpg" alt="新科教育" height="50"/><span>新科教育</span></a></li>
+                    <li><a href="/zx/xq1269/" target="_blank">
+                        <img src="./image/bottom_2.jpg" alt="金益晨" height="50"/><span>金益晨</span></a></li>
+                    <li><a href="/zx/xq1268/" target="_blank">
+                        <img src="./image/bottom_3.jpg" alt="行知一对一" height="50"/><span>行知一对一</span></a></li>
+                    <li><a href="/zx/xq1270/" target="_blank">
+                        <img src="./image/bottom_4.jpg" alt="新世纪学校" height="50"/><span>新世纪学校</span></a></li>
+                    <li><a href="/zx/xq1271/" target="_blank">
+                        <img src="./image/bottom_5.jpg" alt="新艺晨幼儿园" height="50"/><span>新艺晨幼儿园</span></a></li>
+                </ul>
+            </div>
+            <div class="foot_right fll">
+                <ul class=" clearfix flr ">
+                    <li class="">关于我们</li>
+                    <li><a href="/about/introduction.html" target="_blank">关于新科</a></li>
+                    <li><a href="/xiaoqu/" target="_blank">校区分布</a></li>
+                    <li><a href="/ls/" target="_blank">名师风采</a></li>
+                    <li><a href="/about/classroom.html" target="_blank" rel="nofollow">教室出租</a></li>
+                    <li><a href="/about/recruit.html" target="_blank" rel="nofollow">招贤纳士</a></li>
+                </ul>
+                <ul class=" clearfix flr">
+                    <li class="">联系我们</li>
+                    <li class="c9">联系电话：400-623-6833</li>
+                    <li class="c9">QQ:4006236833</li>
+                    <li><a href="javascript:void(0);"
+                           onclick="window.open('http://p.qiao.baidu.com/im/index?siteid=6454196&ucid=984617&cp=&cr=&cw=', '_blank', 'height=473,width=703,top=200,left=200,status=yes,toolbar=no,menubar=no,resizable=yes,scrollbars=no,location=no,titlebar=no')">在线咨询</a>
+                    </li>
+                    <li><a href="javascript:void(0);"
+                           onclick="window.open('http://p.qiao.baidu.com/im/index?siteid=6454196&ucid=984617&cp=&cr=&cw=', '_blank', 'height=473,width=703,top=200,left=200,status=yes,toolbar=no,menubar=no,resizable=yes,scrollbars=no,location=no,titlebar=no')">售后咨询</a>
+                    </li>
+                </ul>
+                <ul class=" clearfix flr">
+                    <li class="">新手帮助</li>
+                    <li><a href="/zx/xq1262/" target="_blank" rel="nofollow">注册流程</a></li>
+                    <li><a href="/zx/xq1261/" target="_blank" rel="nofollow">预约流程</a></li>
+
+                    <li><a href="/wd/" target="_blank">学员问答</a></li>
+
+                    <li><a href="/ditu/" target="_blank">网站地图</a></li>
+                </ul>
+            </div>
+            <div class="expand">
+                <div class="expand_head">
+                    <ul>
+                        <li class="expn">热点推荐</li>
+                    </ul>
+                </div>
+                <div class="expand_cont">
+                    <div class="expand_1 myxepand_2" style="position: relative">
+                        <a target="_self" href="javascript:;" class="drop_down1">收起<i class="hover1"></i></a>
+                        <div class="cont_dr1 clearfix">
+                            <div class="cont1">
+                                <div class="dr-title  fll " style="width: 70px;">热门课程：</div>
+                                <!--<ul class="clearfix drwn_1">-->
+                                <!--<asp:Literal runat="server" ID="litFooterHotCourse"></asp:Literal>-->
+                                <!--</ul>-->
+                                <ul class="clearfix drwn_1">
+                                    <li><a href="/kc/xq6/" target="_blank">围棋培训</a></li>
+                                    <li><a href="/kc/xq2/" target="_blank">高级工商管理硕士EMBA培训</a></li>
+                                    <li><a href="/kc/xq7/" target="_blank">高级工商管理硕士EMBA培训</a></li>
+                                    <li><a href="/kc/xq9/" target="_blank">23123培训</a></li>
+                                    <li><a href="/kc/xq4/" target="_blank">街舞培训</a></li>
+                                    <li><a href="/kc/xq5/" target="_blank">少儿演讲培训</a></li>
+                                    <li><a href="/kc/xq8/" target="_blank">全栈UI视觉设计师培训</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="cont_dr2 clearfix">
+                            <div class="cont2">
+                                <div class="dr-title  fll " style="width: 70px;">热门资讯：</div>
+                                <!--<ul class="drwn_2">-->
+                                <!--<asp:Literal runat="server" ID="litFooterHotNews"></asp:Literal>-->
+                                <!--</ul>-->
+                                <ul class="drwn_2">
+                                    <li><a href="/zx/xq47484/" target="_blank">草书抄经写不好？孙过庭集字《心经》快收藏！</a></li>
+                                    <li><a href="/zx/xq47483/" target="_blank">用硬笔写《兰亭序》，会是怎样一种感觉……</a></li>
+                                    <li><a href="/zx/xq47482/" target="_blank">临的不像=临的不好？您别逗了！</a></li>
+                                    <li><a href="/zx/xq47481/" target="_blank">小保姆写小楷，佩服！</a></li>
+                                    <li><a href="/zx/xq47480/" target="_blank">要闻速递|《中国远程教育》杂志社社长匡贵秋作《中国远程教育》杂志社理事会2017年度工作报告</a>
+                                    </li>
+                                    <li><a href="/zx/xq47479/" target="_blank">英语不好能不能成为一名优秀的程序员？</a></li>
+                                    <li><a href="/zx/xq47478/" target="_blank">为什么很多老程序员不屑用IDE？</a></li>
+                                    <li><a href="/zx/xq47477/" target="_blank">晚托33</a></li>
+                                    <li><a href="/zx/xq47476/" target="_blank">电费太贵？这几个省电妙招了解一下呗！</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="cont_dr2 clearfix">
+                            <div class="cont3">
+                                <div class="dr-title  fll " style="width: 70px;">热门问答：</div>
+                                <!--<ul class="drwn_3">-->
+                                <!--<asp:Literal runat="server" ID="litFooterHotAnswers"></asp:Literal>-->
+                                <!--</ul>-->
+                                <ul class="drwn_3">
+                                    <li><a href="/wd/xq2880790/" target="_blank">新科有少儿象棋班吗</a></li>
+                                    <li><a href="/wd/xq2880789/" target="_blank">考会计证需要什么学历？</a></li>
+                                    <li><a href="/wd/xq2880788/" target="_blank">苏州吴中区有考叉车证的吗</a></li>
+                                    <li><a href="/wd/xq2880787/" target="_blank">育婴师的证书是哪儿发的</a></li>
+                                    <li><a href="/wd/xq2880786/" target="_blank">会计从业资格证现在取消了，想要从事会计需要考什么证啊？</a></li>
+                                    <li><a href="/wd/xq2880785/" target="_blank">新科单科能不能报名？我只想报《管理会计》的课程</a></li>
+                                    <li><a href="/wd/xq2880784/" target="_blank">请问自考、成考和远程教育有什么区别啊？</a></li>
+                                    <li><a href="/wd/xq2880783/" target="_blank">想考网络教育，有哪些专业？</a></li>
+                                    <li><a href="/wd/xq2880782/" target="_blank">想考叉车证，有报考条件限制吗</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="foot_link" style="padding-bottom: 100px;">
+        <div class="main  footer-link-content">
+            <div class="ICP">苏ICP备10052125号-3 总部地址：苏州姑苏区南环东路939号昌和智汇坊6F 投诉电话：15370017652 投诉邮箱：<a
+                    href="mailto:tousu@xkpx.com?subject=feedback">tousu@xkpx.com</a> Power by：<a
+                    href="http://www.dazhiliao.com" target="_blank">知了科技</a></div>
+            <div class="ICP_icon">
+                <ul class="clearfix">
+                    <li><a href="http://www.cyberpolice.cn/wfjb/" rel="nofollow" target="_blank">
+                        <img src="./image/foot_icon1.jpg" alt="网络违法犯罪举报网站"/></a></li>
+                    <li><a href="http://www.12321.cn/" rel="nofollow" target="_blank">
+                        <img src="./image/foot_icon2.jpg" alt="12321垃圾信息举报中心"/></a></li>
+                    <li><a href="http://jscainfo.miitbeian.gov.cn/state/outPortal/loginPortal.action" rel="nofollow"
+                           target="_blank">
+                        <img src="./image/foot_icon3.jpg" alt="ICP/IP 地址/域名信息备案管理系统"/></a></li>
+                    <li><a href="http://www.12377.cn/" rel="nofollow" target="_blank">
+                        <img src="./image/foot_icon4.jpg" alt="不良信息举报中心"/></a></li>
+                    <li><a href="http://www.saic.gov.cn/" rel="nofollow" target="_blank">
+                        <img src="./image/foot_icon5.jpg" alt="国家工商行政管理总局"/></a></li>
+                    <li><a href="http://kxsite.cn/home.html" rel="nofollow" target="_blank">
+                        <img src="./image/foot_icon6.jpg" alt="可信网站"/></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div class="footer">-->
+    <!--<div class="footer-content">-->
+        <!--<div class="footer-top clearfix">-->
+            <!--<div class="attach-brands in-bl">-->
+                <!--<p class="brands-title">旗下品牌</p>-->
+                <!--<div class="brands-content">-->
+
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="connect-container in-bl flr">-->
+                <!--<div class="connect-content">-->
+                    <!--<p class="connect-title in-bl">关于我们</p>-->
+                    <!--<div class="connect-link-content in-bl">-->
+                        <!--<a href="#" class="connect-link">新科简介</a>-->
+                        <!--<a href="#" class="connect-link">校区分布</a>-->
+                        <!--<a href="#" class="connect-link">名师风采</a>-->
+                        <!--<a href="#" class="connect-link">新科社区</a>-->
+                        <!--<a href="#" class="connect-link">招贤纳士</a>-->
+                        <!--<a href="#" class="connect-link">加盟合作</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="connect-content">-->
+                    <!--<p class="connect-title in-bl">联系我们</p>-->
+                    <!--<div class="connect-link-content in-bl">-->
+                        <!--<a href="#" class="connect-link">联系电话：400-623-6833</a>-->
+                        <!--<a href="#" class="connect-link">QQ:704589929</a>-->
+                        <!--<a href="#" class="connect-link">在线咨询</a>-->
+                        <!--<a href="#" class="connect-link">售后咨询</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="connect-content">-->
+                    <!--<p class="connect-title in-bl">新手帮助 </p>-->
+                    <!--<div class="connect-link-content in-bl">-->
+                        <!--<a href="#" class="connect-link">注册流程 </a>-->
+                        <!--<a href="#" class="connect-link">选课流程 </a>-->
+                        <!--<a href="#" class="connect-link">网上报名流程 </a>-->
+                        <!--<a href="#" class="connect-link">网上报名流程 </a>-->
+                        <!--<a href="#" class="connect-link">校区和报名点查询</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="footer-bottom">-->
+            <!--<p class="aside-link-title">-->
+                <!--<span class="link-title">友情链接 </span>-->
+                <!--<span class="link-title">热点推荐</span>-->
+            <!--</p>-->
+            <!--<div class="aside-link-content">-->
+                <!--<a href="#" class="aside-link in-bl">拜旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">泰国旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">巴厘岛旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">普吉岛旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">济州岛旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">韩国旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">柬埔寨旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">日本旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">斯里兰卡旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">泰国六日游</a>-->
+                <!--<a href="#" class="aside-link in-bl">长滩岛旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">马尔代夫旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">越南旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">夏威夷旅游</a>-->
+                <!--<a href="#" class="aside-link in-bl">塞班岛旅游</a>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.3.8/index.js"></script>
+<script type="text/javascript" src="//g.alicdn.com/de/prismplayer/2.6.0/aliplayer-min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                showAside: true,
+                showTeacher: true,
+                video: {
+                    name: '借贷记账法的试算平衡',
+                    teacher: '张三'
+                },
+                activeName: 'chat',
+                chatList: [
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'},
+                    {id: '1', name: '徐小宝', major: '人力资源本科', classNum: '36', text: '有苏州的同学吗？'}
+                ],
+                questionList: [
+                    {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    }, {
+                        id: '1', title: '请问老师，如果怎样怎样怎样诸如此类的问题，在实践过程\n' +
+                        '中该如何有效的避免和解决呢？', content: '答：在实践过程中，我们应该怎样怎样怎样，在实践\n' +
+                        '过程中，我们应该怎样怎样怎样，在实践过程中，我\n' +
+                        '们应该怎样怎样怎样！'
+                    },
+
+                ],
+                synopsisList: [
+                    {
+                        id: '1',
+                        active: true,
+                        src: './img/img-src.png',
+                        text: '',
+                        title: '第二页·第2章',
+                        detail: '开学典礼人力资源管理0427'
+                    },
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'},
+                    {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'}
+                ],
+                courseList: [
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false}
+                ]
+            }
+        },
+        methods: {
+            changeActive(item) {
+                this.courseList.forEach(v => v.iscur = false);
+                item.iscur = true;
+            }
+        }
+    })
+</script>
+<script>
+    var player = new Aliplayer({
+            id: "J_prismPlayer",
+            autoplay: true,
+            isLive: false,
+            playsinline: true,
+            width: "840px",
+            height: "640px",
+            controlBarVisibility: "always",
+            useH5Prism: false,
+            useFlashPrism: false,
+            source: "//player.alicdn.com/video/aliyunmedia.mp4",
+            cover: ""
+        }, function (player) {
+            console.log("播放器创建了。");
+        }
+    );
+</script>
+</body>
+</html>

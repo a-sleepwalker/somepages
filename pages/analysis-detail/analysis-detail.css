@@ -1,0 +1,165 @@
+.main-container {
+  margin: 20px auto;
+  width: 1200px;
+}
+.main-container .page-header {
+  height: 80px;
+  background: #f7fbfd;
+  border: 1px solid #deeefd;
+}
+.main-container .page-header .header-title {
+  padding-left: 30px;
+  height: 80px;
+  line-height: 80px;
+  font-size: 18px;
+  color: #666;
+}
+.main-container .page-header .search-btn {
+  margin: 18px 25px 0 0;
+}
+.main-container .content-container {
+  margin-top: 20px;
+}
+.main-container .topic-nav {
+  width: 270px;
+  border: 1px solid #deeefd;
+}
+.main-container .topic-nav .topic-nav-header {
+  height: 50px;
+  line-height: 50px;
+  background: #f7fbfd;
+  border-bottom: 1px solid #deeefd;
+}
+.main-container .topic-nav .topic-icon-item {
+  margin-right: 20px;
+}
+.main-container .topic-nav .topic-icon-item:first-child {
+  margin-left: 25px;
+}
+.main-container .topic-nav .topic-icon-text {
+  font-size: 14px;
+  color: #666;
+}
+.main-container .topic-nav .topic-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.main-container .topic-nav .todo {
+  background: #f7f6f2;
+  border: 1px solid #e0e0e0;
+}
+.main-container .topic-nav .correct {
+  background: #fafff4;
+  border: 1px solid #5dc477;
+}
+.main-container .topic-nav .wrong {
+  background: #fff4f4;
+  border: 1px solid #ee4b19;
+}
+.main-container .topic-nav .topic-nav-title {
+  height: 50px;
+  line-height: 50px;
+  font-size: 14px;
+  color: #666;
+}
+.main-container .topic-nav .topic-nav-content {
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+.main-container .topic-nav .topic-type-item {
+  margin: 5px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+.main-container .topic-nav .topic-type-item.current {
+  background: url("./img/current.png") no-repeat;
+}
+.main-container .topic-nav .topic {
+  margin: 1px auto;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  color: #999;
+}
+.main-container .topic-content {
+  margin-left: 290px;
+  border: 1px solid #deeefd;
+}
+.main-container .topic-content .content-header {
+  padding-left: 30px;
+  height: 50px;
+  line-height: 50px;
+  background: #f7fbfd;
+  border-bottom: 1px solid #deeefd;
+  font-size: 16px;
+  color: #666;
+}
+.main-container .topic-content .collect-btn {
+  margin-right: 40px;
+  font-size: 14px;
+  color: #666;
+}
+.main-container .topic-content .collect-icon {
+  margin-right: 5px;
+  font-size: 28px;
+  color: #ee4b19;
+  vertical-align: middle;
+}
+.main-container .topic-content .topic-item {
+  margin: 20px 40px;
+  color: #333;
+}
+.main-container .topic-content .topic-title {
+  line-height: 36px;
+  font-size: 14px;
+  color: #333;
+}
+.main-container .topic-content .topic-option-item {
+  height: 30px;
+  line-height: 40px;
+}
+.main-container .topic-content .fill-input {
+  margin: 10px 0;
+}
+.main-container .topic-content .analysis-content {
+  margin: 0 40px;
+  padding: 15px 10px;
+  border: 1px solid #fcc;
+  background: #fff7f7;
+}
+.main-container .topic-content .correct-answer {
+  margin: 10px;
+  font-size: 14px;
+  color: #5dc477;
+}
+.main-container .topic-content .detail-title,
+.main-container .topic-content .point-title,
+.main-container .topic-content .analysis-text,
+.main-container .topic-content .point-text {
+  padding-left: 50px;
+}
+.main-container .topic-content .detail-title,
+.main-container .topic-content .point-title {
+  line-height: 2.5;
+  font-size: 14px;
+  color: #333;
+}
+.main-container .topic-content .detail-title {
+  background: url("./img/analysis-icon.png") no-repeat 10px center;
+}
+.main-container .topic-content .point-title {
+  background: url("./img/point-icon.png") no-repeat 10px center;
+}
+.main-container .topic-content .analysis-text,
+.main-container .topic-content .point-text {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.67;
+}
+.main-container .topic-content .button-group {
+  margin: 40px;
+}

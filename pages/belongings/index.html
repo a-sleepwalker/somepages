@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息-个人资料</title>
+    <link href="https://cdn.bootcss.com/normalize/8.0.0/normalize.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/element-ui/2.3.8/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../common/style/common.css">
+    <link rel="stylesheet" href="belongings.css">
+</head>
+<body>
+<div id="app" v-cloak>
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="我的财产" name="belongings">
+            <div class="info">
+                <h3 class="panel-title">我的余额</h3>
+                <h4 class="info-item">尚德元：<span class="num-text"></span></h4>
+                <h4 class="info-item">金币：<span class="num-text"></span></h4>
+                <h4 class="info-item">等级：<span class="num-text"></span></h4>
+                <h4 class="info-item">经验：<span class="num-text"></span></h4>
+            </div>
+            <div class="recharge-panel">
+                <h3 class="panel-title">充值金币</h3>
+                <el-button @click="recharge(tag)" size="mini" :key="tag" v-for="tag in tagList">
+                    {{tag}}
+                </el-button>
+                <el-input
+                        class="input-new-tag"
+                        v-if="inputVisible"
+                        v-model="inputValue"
+                        ref="saveTagInput"
+                        size="mini"
+                        @keyup.enter.native="handleInputConfirm"
+                        @blur="handleInputConfirm"
+                >
+                </el-input>
+                <el-button v-else class="button-new-tag" size="mini" @click="showInput">+ New Tag</el-button>
+                <el-button size="small" type="primary">立即充值</el-button>
+            </div>
+            <div class="present-panel">
+                <h3 class="panel-title">你可以在直播间送以下礼物给老师</h3>
+                <ul class="present-list">
+                    <li class="fll  present-item" v-for="item in presentList"></li>
+                </ul>
+            </div>
+        </el-tab-pane>
+        <el-tab-pane label="消费记录" name="record"></el-tab-pane>
+        <el-tab-pane label="优惠券" name="coupon">
+            <el-table :data="couponTable">
+                <el-table-column label="编号" align="center" width="80px" prop="num"></el-table-column>
+                <el-table-column label="金额(元)" align="center" width="80px" prop="size"></el-table-column>
+                <el-table-column label="使用年限" align="center" width="80px">
+                    <template slot-scope="scope">
+                        <span>{{scope.row.st}}</span> - <span>{{scope.row.et}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="限定项目" align="center" width="80px" prop="pro"></el-table-column>
+                <el-table-column label="说明" align="center" width="80px" prop="intro"></el-table-column>
+                <el-table-column label="地区" align="center" width="80px" prop="area"></el-table-column>
+                <el-table-column label="状态" align="center" width="80px" prop="status"></el-table-column>
+            </el-table>
+
+        </el-tab-pane>
+    </el-tabs>
+
+
+</div>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.3.8/index.js"></script>
+<script>
+    var vm = new Vue({
+        data: function () {
+            return {
+                activeName: 'belongings',
+                info: {
+                    virtualMoney: '',
+                    gold: '',
+                    lev: '',
+                    exp: ''
+                },
+                tagList: ['5金币', '10金币', '50金币', '100金币'],
+                inputVisible: false,
+                inputValue: '',
+                presentList: [],
+                couponTable: [
+                    {
+                        num: 'a123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'b123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'c123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'd123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'e123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'f123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'g123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'h123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'i123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'j123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    },
+                    {
+                        num: 'k123',
+                        size: '5折',
+                        st: new Date(),
+                        et: new Date(),
+                        pro: '全部',
+                        intro: '每张用一个订单',
+                        area: '全国',
+                        status: '已使用'
+                    }
+                ]
+            }
+        },
+        methods: {
+            handleClick: function (panel) {
+
+            },
+            handleInputConfirm: function () {
+                var inputValue = this.inputValue;
+                if (inputValue) {
+                    this.tagList.push(inputValue + '金币');
+                }
+                this.inputVisible = false;
+                this.inputValue = '';
+            },
+            showInput: function () {
+                this.inputVisible = true;
+                this.$nextTick(_ => {
+                    this.$refs.saveTagInput.$refs.input.focus();
+                });
+            },
+            recharge: function (val) {
+
+            }
+        },
+        mounted: function () {
+
+        },
+        created: function () {
+
+        }
+    }).$mount('#app')
+</script>
+</body>
+</html>

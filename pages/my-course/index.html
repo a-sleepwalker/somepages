@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息-我的课程</title>
+    <link href="https://cdn.bootcss.com/normalize/8.0.0/normalize.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/element-ui/2.3.8/theme-chalk/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../common/style/common.css">
+    <link rel="stylesheet" href="my-course.css">
+</head>
+<body>
+<div id="app" v-cloak>
+    <div class="page-header clearfix">
+        <ul class="course-title-list in-bl">
+            <li class="course-title-item in-bl" :class="{'course-active':item.isActive}"
+                v-for="(item,index) in courseTitleList.slice(0,2)" :key="item.id"
+                @click="changeCourse(item.id,index)">
+                <el-badge value="今日有课">
+                    <h2 class="course-title">{{item.courseTitle}}</h2>
+                </el-badge>
+                <p class="check-attendance">共{{item.total}}节课|已出勤{{item.present}}节</p>
+            </li>
+        </ul>
+        <div class="course-menu-container in-bl flr">
+            <i class="dropdown-btn in-bl" @click="dropdown=!dropdown" :class="{'active':dropdown}"></i>
+        </div>
+    </div>
+    <div class="page-content">
+        <el-tabs type="border-card" v-model="activeName" @tab-click="changeTab">
+            <el-tab-pane label="直播课表" name="live">
+                <div v-if="liveList.length>0" class="live-container">
+                    <ul class="live-list">
+                        <li class="live-item" v-for="(item,index) in liveList" v-if="index<limit" :key="item.id">
+                            <div class="top-panel">
+                                <span class="live-date in-bl">{{item.date}}</span>
+                                <span class="live-day in-bl">{{item.day}}</span>
+                                <p class="live-year">{{item.year}}</p>
+                            </div>
+                            <div class="bottom-panel">
+                                <div class="live-time-container in-bl">
+                                    <div class="live-time">{{item.st}}~{{item.et}}</div>
+                                </div>
+                                <div class="live-info-container in-bl clearfix">
+                                    <div class="live-info-content in-bl">
+                                        <h1 class="live-title">{{item.title}}</h1>
+                                        <h3 class="live-major">科目：{{item.major}}</h3>
+                                        <h3 class="live-teacher">老师：{{item.teacher}}</h3>
+                                        <h3 class="live-remark">备注：{{item.remark}}</h3>
+                                    </div>
+                                    <div class="tool-btn-group flr">
+                                        <el-button class="tool-btn" size="small"><i class="el-icon-date"></i>查看日历
+                                        </el-button>
+                                        <el-button class="tool-btn" size="small">待开始</el-button>
+                                        <el-button class="tool-btn" size="small">课件下载</el-button>
+                                        <el-button class="tool-btn" size="small">做作业</el-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="live-footer clearfix">
+                        <a href="javascript:" class="load-more in-bl" @click="limit+=2">显示更多</a>
+                        <a href="javascript:" class="upgrade-course in-bl flr">升级课程</a>
+                    </div>
+                </div>
+                <div v-else class="fill-content">
+                    <span>亲！还没有直播课</span>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="重播课表" name="rec">
+                <div v-if="liveList.length>0" class="rec-container">
+                    <div class="course-tip clearfix">
+                        <span class="tip-title in-bl">上次复习到：</span>
+                        <div class="in-bl">
+                            <el-breadcrumb separator="/">
+                                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                                <el-breadcrumb-item><a href="/">活动管理</a></el-breadcrumb-item>
+                            </el-breadcrumb>
+                        </div>
+                        <el-button class="flr check-calendar" size="small"><i class="el-icon-date"></i>查看日历</el-button>
+                    </div>
+                    <div class="search-container">
+                        <el-form ref="form" label-width="85px" class="clearfix">
+                            <el-form-item label="课程搜索：" class="in-bl fll">
+                                <div class="form-input-item">
+                                    <el-input v-model="searchKey" size="small"></el-input>
+                                </div>
+                                <el-button class="search-btn" type="primary" size="small">搜索</el-button>
+                            </el-form-item>
+                            <el-form-item label="排序方式：" class="in-bl flr style-mr15">
+                                <el-radio-group v-model="sort">
+                                    <el-radio label="asc">开课时间正序</el-radio>
+                                    <el-radio label="desc">开课时间倒序</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                    <div class="course-list-container">
+                        <ul class="course-list">
+                            <li class="course-item" v-for="(item,index) in courseList" :key="item.id">
+                                <div class="course-content clearfix">
+                                    <div class="in-bl panel-1">
+                                        <p class="course-section">第{{index+1}}部分</p>
+                                        <h3 class="course-name">{{item.title}}</h3>
+                                        <p class="course-time">时间：<span>{{item.time}}</span></p>
+                                    </div>
+
+                                    <div class="in-bl flr panel-2">
+                                        <a href="javascript:" :class="{'course-active':item.show}"
+                                           class="dropdown-icon in-bl"
+                                           @click="expendCourse(item)"></a>
+                                    </div>
+                                    <div class="in-bl flr panel-3">
+                                        <p class="panel-num">{{item.unfinished}}</p>
+                                        <p class="panel-text">未完成作业</p>
+                                    </div>
+                                    <div class="in-bl flr  panel-3">
+                                        <p class="panel-num">{{item.replay}}</p>
+                                        <p class="panel-text">重播</p>
+                                    </div>
+                                </div>
+                                <div class="course-detail clearfix" v-if="item.show" v-for="(sec,idx) in sectionList"
+                                     :key="sec.id">
+                                    <div class="in-bl panel-1">
+                                        <span class="in-bl course-num">{{idx+1}}</span>
+                                    </div>
+                                    <div class="in-bl panel-2">
+                                        <p class="detail-title">{{sec.title}}</p>
+                                        <p class="detail-sub">{{sec.sub}}</p>
+                                        <p class="detail-time">时间：<span>{{sec.time}}</span></p>
+                                    </div>
+                                    <div class="in-bl flr panel-3">
+                                        <el-button type="text" @click="watchRecord(sec)">看重播</el-button>
+                                        <el-button type="text">无作业</el-button>
+                                        <el-button type="text">下载课件</el-button>
+                                        <el-button type="text">下载录音</el-button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div v-else class="fill-content">
+                    <span>亲！还没有重播课</span>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="录播视频" name="video">
+                <div v-if="liveCourse"></div>
+                <div v-else class="fill-content">
+                    <span>亲！还没有录播</span>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="配套题库" name="question">
+                <div v-if="liveCourse"></div>
+                <div v-else class="fill-content">
+                    <span>亲！还没有配套题库</span>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="资料下载" name="file">
+                <div v-if="liveCourse"></div>
+                <div v-else class="fill-content">
+                    <span>亲！还没有资料下载</span>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="常见问题" name="qa">
+                <div v-if="liveCourse">
+                    <el-collapse accordion>
+                        <el-collapse-item>
+                            <template slot="title">
+                                <h3></h3>
+                            </template>
+                            <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+                            <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+                        </el-collapse-item>
+                        <el-collapse-item title="反馈 Feedback">
+                            <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
+                            <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
+                        </el-collapse-item>
+                        <el-collapse-item title="效率 Efficiency">
+                            <div>简化流程：设计简洁直观的操作流程；</div>
+                            <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
+                            <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
+                        </el-collapse-item>
+                        <el-collapse-item title="可控 Controllability">
+                            <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
+                            <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
+                        </el-collapse-item>
+                    </el-collapse>
+                </div>
+                <div v-else class="fill-content">
+                    <span>亲！还没有常见问题</span>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
+        <div class="course-title-dropdown" :class="{'active':dropdown}">
+            <ul class="dropdown-list">
+                <li class="dropdown-item" v-for="(item,index) in courseTitleList.slice(2)" :key="item.id"
+                    @click="changeCourse(item.id,index+2)">
+                    <h2 class="course-title">{{item.courseTitle}}</h2>
+                    <p class="check-attendance">共{{item.total}}节课|已出勤{{item.present}}节</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.3.8/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                activeName: 'live',
+                limit: 2,
+                dropdown: false,
+                searchKey: '',
+                liveCourse: '',
+                sort: 'asc',
+                courseTitleList: [
+                    {id: '1', courseTitle: '【江苏人力本科1】 移动1对1私教班', total: '71', present: '1', isActive: false},
+                    {id: '2', courseTitle: '【江苏人力本科2】 移动1对1私教班', total: '71', present: '1', isActive: false},
+                    {id: '3', courseTitle: '【江苏人力本科3】 移动1对1私教班', total: '71', present: '1', isActive: false},
+                    {id: '4', courseTitle: '【江苏人力本科4】 移动1对1私教班', total: '71', present: '1', isActive: false}
+                ],
+                review: '班级见面会>  【小吴老师新生班会课】江苏人力',
+                liveList: [],
+                courseList: [
+                    {
+                        id: '1',
+                        show: false,
+                        title: '【芝士-全国人力】【开学典礼】',
+                        time: '2018.04.27-2018.04.27',
+                        unfinished: '0',
+                        replay: '1'
+                    },
+                    {
+                        id: '1',
+                        show: false,
+                        title: '【芝士-全国人力】【开学典礼】',
+                        time: '2018.04.27-2018.04.27',
+                        unfinished: '0',
+                        replay: '1'
+                    },
+                    {
+                        id: '1',
+                        show: false,
+                        title: '【芝士-全国人力】【开学典礼】',
+                        time: '2018.04.27-2018.04.27',
+                        unfinished: '0',
+                        replay: '1'
+                    },
+                ],
+                sectionList: []
+            }
+        },
+        methods: {
+            expendCourse: function (item) {
+                this.sectionList = [
+                    {id: '1', title: '【开学典礼】 全国人力', sub: '【开学典礼】 全国人力', time: '2018.04.27 19:00-20:30'},
+                    {id: '1', title: '【开学典礼】 全国人力', sub: '【开学典礼】 全国人力', time: '2018.04.27 19:00-20:30'},
+                    {id: '1', title: '【开学典礼】 全国人力', sub: '【开学典礼】 全国人力', time: '2018.04.27 19:00-20:30'}
+                ];
+                this.courseList.forEach(v => v !== item ? v.show = false : null);
+                item.show = !item.show;
+            },
+            watchRecord: function (sec) {
+
+            },
+            changeCourse: function (MajorId, index) {
+                if (index > 1) {
+                    var oldVal = this.courseTitleList[1];
+                    var newVal = this.courseTitleList[index];
+                    this.courseTitleList.splice(1, 1, newVal);
+                    this.courseTitleList.splice(index, 1, oldVal);
+                }
+                this.courseTitleList.forEach(function (v) {
+                    v.isActive = v.id === MajorId;
+                })
+            },
+            changeTab: function (panel) {
+            },
+        },
+        created: function () {
+            let i = 0;
+            while (i < 5) {
+                this.liveList.push({
+                    id: 'l1',
+                    date: '05月11日',
+                    day: '星期三',
+                    year: '2018年',
+                    st: '19:00',
+                    et: '21:30',
+                    title: '【招聘管理】  江苏人力本<精讲5>',
+                    major: '【招聘管理】  江苏人力本<精讲>',
+                    teacher: '毛琪夏',
+                    remark: '【招聘管理】  江苏人力本<精讲6>'
+                });
+                i++;
+            }
+        }
+    })
+</script>
+</body>
+</html>

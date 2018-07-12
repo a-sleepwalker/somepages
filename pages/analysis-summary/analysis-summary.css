@@ -1,0 +1,107 @@
+.main-container {
+  margin: 20px auto;
+  width: 1200px;
+}
+.main-container .page-header {
+  padding-left: 30px;
+  height: 120px;
+  background: #f7fbfd;
+  border: 1px solid #deeefd;
+}
+.main-container .page-header .right-panel {
+  margin: 5px 30px;
+  width: 109px;
+  height: 101px;
+  position: relative;
+  background: url("./img/score-bg.png") no-repeat;
+}
+.main-container .page-header .achieve-score {
+  position: absolute;
+  top: 30%;
+  left: 33%;
+  color: #ff3b3b;
+  font-size: 20px;
+}
+.main-container .page-header .total-score {
+  position: absolute;
+  top: 67%;
+  left: 24%;
+  color: #fff;
+  font-size: 12px;
+}
+.main-container .header-title {
+  height: 60px;
+  line-height: 60px;
+  font-size: 18px;
+  color: #666;
+}
+.main-container .topic-nav {
+  margin-top: 20px;
+  border: 1px solid #deeefd;
+}
+.main-container .topic-nav .topic-nav-header {
+  height: 50px;
+  line-height: 50px;
+  background: #f7fbfd;
+  border-bottom: 1px solid #deeefd;
+}
+.main-container .topic-nav .topic-header-title {
+  padding-left: 30px;
+  font-size: 16px;
+  color: #666;
+}
+.main-container .topic-nav .topic-icon-item {
+  margin-right: 30px;
+}
+.main-container .topic-nav .topic-icon-item:first-child {
+  margin-left: 25px;
+}
+.main-container .topic-nav .topic-icon-text {
+  font-size: 14px;
+  color: #666;
+}
+.main-container .topic-nav .topic-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.main-container .topic-nav .todo {
+  background: #f7f6f2;
+  border: 1px solid #e0e0e0;
+}
+.main-container .topic-nav .correct {
+  background: #fafff4;
+  border: 1px solid #5dc477;
+}
+.main-container .topic-nav .wrong {
+  background: #fff4f4;
+  border: 1px solid #ee4b19;
+}
+.main-container .topic-nav .topic-nav-title {
+  height: 50px;
+  line-height: 50px;
+  font-size: 14px;
+  color: #666;
+}
+.main-container .topic-nav .topic-nav-content {
+  margin-bottom: 30px;
+  padding: 0 30px;
+}
+.main-container .topic-nav .topic-type-item {
+  margin: 5px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+.main-container .topic-nav .topic-type-item.current {
+  background: url("./img/current.png") no-repeat;
+}
+.main-container .topic-nav .topic {
+  margin: 1px auto;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  color: #999;
+}
