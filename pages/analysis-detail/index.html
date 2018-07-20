@@ -54,7 +54,7 @@
                 <div class="content-header clearfix">
                     <h3 class="topic-type-text fll">{{curItem.LeiXing|zhCNTopicType}}</h3>
                     <a class="collect-btn flr" href="javascript:" @click="toggleCollection">
-                        <i :class="curItem.hasCollected?'el-icon-star-on':'el-icon-star-off'" class="collect-icon"></i>
+                        <i class="collect-icon" :class="curItem.hasCollected?'el-icon-star-on':'el-icon-star-off'"></i>
                         {{curItem.hasCollected?'取消收藏':'收藏'}}
                     </a>
                 </div>
@@ -129,8 +129,11 @@
                 <div class="button-group">
                     <el-button @click="toQuestion(-1)">上一题</el-button>
                     <el-button @click="toQuestion(1)">下一题</el-button>
-                    <el-button type="success" v-show="!(curItem.LeiXing==='0'||curItem.LeiXing==='2')" :disabled="curItem.hasDone" @click="confirmHandler">确认</el-button>
-                    <el-button type="primary" @click="submitHandler">提交答题</el-button>
+                    <el-button type="success" v-show="!(curItem.LeiXing==='0'||curItem.LeiXing==='2')"
+                               :disabled="curItem.hasDone" @click="confirmHandler">确认
+                    </el-button>
+                    <el-button type="primary" @click="submitHandler" v-if="!historyMode" :disabled="hasSubmit">提交答题
+                    </el-button>
                 </div>
             </div>
         </div>
@@ -139,6 +142,13 @@
 <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
 <script src="https://cdn.bootcss.com/element-ui/2.3.8/index.js"></script>
 <script>
+    //获取地址栏参数，name: 参数名称
+    function getUrlParms(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        return r ? r[2] ? r[2] : '' : '';
+    }
+
     var vm = new Vue({
         data: function () {
             return {
@@ -155,7 +165,9 @@
                 // analysisText: '',
                 pointText: '',//暂无
                 showAnalysis: false,
-                initTime: ''
+                initTime: '',
+                historyMode: false,
+                hasSubmit: false
             }
         },
         computed: {
@@ -185,21 +197,65 @@
                     _this.setTopicData(c, data);
                 }
             },
-            loadTopicData: function () {
+            loadTopicData: function (param) {
                 var _this = this;
-                _this.getAllTopic.forEach(function (val) {
-                    val.hasDone = true;
-                })
+                _this.showAnalysis = true;
+                var allTopicData = _this.getLoadingData(param);
+                var arr0 = [], arr1 = [], arr2 = [], arr3 = [], arr4 = [];
+                allTopicData.forEach(function (value, index) {
+                    switch (value.LeiXing) {
+                        case '0':
+                            arr0.push(value);
+                            break;
+                        case '1':
+                            if (value.selectedOption) {
+                                value.selectedOption = value.selectedOption.split(',');
+                            } else {
+                                value.selectedOption = [];
+                            }
+                            arr1.push(value);
+                            break;
+                        case '2':
+                            arr2.push(value);
+                            break;
+                        case '3':
+                            value.fillBlank = value.st.map(function (v, i) {
+                                return {
+                                    Answer: v,
+                                    Id: i
+                                };
+                            });
+                            arr3.push(value);
+                            break;
+                        case '4':
+                            value.textarea = value.Answer;
+                            arr4.push(value);
+                            break;
+                    }
+                    value.hasDone = true;
+                    value.hasCollected = value.collections === 'true';
+                    value.isCurrent = 0 === index;
+                });
+                _this.topicList = [
+                    {Type: '0', TMBM: arr0},
+                    {Type: '1', TMBM: arr1},
+                    {Type: '2', TMBM: arr2},
+                    {Type: '3', TMBM: arr3},
+                    {Type: '4', TMBM: arr4}
+                ];
+                _this.curItem = allTopicData[0];
+
+
             },
             setTopicData: function (topic, data) {
-                topic.topicTitle = data.data[0].Title;
-                topic.analysisText = data.data[0].Analysis;
+                topic.topicTitle = data[0].Title;
+                topic.analysisText = data[0].Analysis;
                 switch (topic.LeiXing) {
                     case '0':
                     case '1':
                     case '2':
                         topic.correctAnswer =
-                            data.data
+                            data
                                 .filter(function (val) {
                                     return val.IsRight === '1';
                                 })
@@ -209,13 +265,13 @@
                                         idx: val.rownum - 1
                                     };
                                 });
-                        topic.topicOptionList = data.data;
+                        topic.topicOptionList = data;
                         break;
-                    case  '3':
-                        topic.fillBlank = data.data;
+                    case '3':
+                        topic.fillBlank = data;
                         break;
-                    case  '4':
-                        topic.textarea = data.data[0].Answer;
+                    case '4':
+                        topic.textarea = data[0].Answer;
                         break;
                 }
             },
@@ -231,102 +287,66 @@
                     ELEMENT.MessageBox('已做完全部题目');
                 }
             },
-            getTopicList: function () {
+            getTopicList: function (param) {
                 var _this = this;
-                var list = [
-                    {
-                        "Type": '0',
-                        "TMBM": [{"rownum": 1, "Id": "3800", "ExamId": 97, "LeiXing": '0'}, {
-                            "rownum": 2,
-                            "Id": "3801",
-                            "ExamId": 97,
-                            "LeiXing": '0'
-                        }, {"rownum": 3, "Id": "3802", "ExamId": 97, "LeiXing": '0'}, {
-                            "rownum": 4,
-                            "Id": "3803",
-                            "ExamId": 97,
-                            "LeiXing": '0'
-                        }, {"rownum": 5, "Id": "3804", "ExamId": 97, "LeiXing": '0'}, {
-                            "rownum": 6,
-                            "Id": "3805",
-                            "ExamId": 97,
-                            "LeiXing": '0'
-                        }, {"rownum": 7, "Id": "3806", "ExamId": 97, "LeiXing": '0'}, {
-                            "rownum": 8,
-                            "Id": "3807",
-                            "ExamId": 97,
-                            "LeiXing": '0'
-                        }, {"rownum": 9, "Id": "3808", "ExamId": 97, "LeiXing": '0'}, {
-                            "rownum": 10,
-                            "Id": "3809",
-                            "ExamId": 97,
-                            "LeiXing": '0'
-                        }, {"rownum": 11, "Id": "3810", "ExamId": 97, "LeiXing": '0'}, {
-                            "rownum": 12,
-                            "Id": "3811",
-                            "ExamId": 97,
-                            "LeiXing": '0'
-                        }, {"rownum": 13, "Id": "3812", "ExamId": 97, "LeiXing": '0'}, {
-                            "rownum": 14,
-                            "Id": "3813",
-                            "ExamId": 97,
-                            "LeiXing": '0'
-                        }, {"rownum": 15, "Id": "3814", "ExamId": 97, "LeiXing": '0'}, {
-                            "rownum": 16,
-                            "Id": "3815",
-                            "ExamId": 97,
-                            "LeiXing": '0'
-                        }]
-                    }, {"Type": '1', "TMBM": [{"rownum": 17, "Id": "3816", "ExamId": 97, "LeiXing": '1'}]}, {
-                        "Type": '2',
-                        "TMBM": []
+                var list = [{
+                    "Type": "0",
+                    "TMBM": [{
+                        "rownum": 1,
+                        "Id": "3793",
+                        "ExamId": 96,
+                        "LeiXing": "0",
+                        "LessonId": "331397461"
                     }, {
-                        "Type": '3',
-                        "TMBM": [
-                            {"rownum": 18, "Id": "3817", "ExamId": 97, "LeiXing": '3'}, {
-                                "rownum": 19,
-                                "Id": "3818",
-                                "ExamId": 97,
-                                "LeiXing": '3'
-                            }, {"rownum": 20, "Id": "3819", "ExamId": 97, "LeiXing": '3'}, {
-                                "rownum": 21,
-                                "Id": "3820",
-                                "ExamId": 97,
-                                "LeiXing": '3'
-                            }, {"rownum": 22, "Id": "3821", "ExamId": 97, "LeiXing": '3'}
-                        ]
+                        "rownum": 2,
+                        "Id": "3794",
+                        "ExamId": 96,
+                        "LeiXing": "0",
+                        "LessonId": "331397461"
                     }, {
-                        "Type": '4',
-                        "TMBM": [
-                            {"rownum": 23, "Id": "3822", "ExamId": 97, "LeiXing": '4'}, {
-                                "rownum": 24,
-                                "Id": "3823",
-                                "ExamId": 97,
-                                "LeiXing": '4'
-                            }, {"rownum": 25, "Id": "3824", "ExamId": 97, "LeiXing": '4'}, {
-                                "rownum": 26,
-                                "Id": "3825",
-                                "ExamId": 97,
-                                "LeiXing": '4'
-                            }, {"rownum": 27, "Id": "3826", "ExamId": 97, "LeiXing": '4'}, {
-                                "rownum": 28,
-                                "Id": "3827",
-                                "ExamId": 97,
-                                "LeiXing": '4'
-                            }, {"rownum": 29, "Id": "3828", "ExamId": 97, "LeiXing": '4'}, {
-                                "rownum": 30,
-                                "Id": "3829",
-                                "ExamId": 97,
-                                "LeiXing": '4'
-                            }, {"rownum": 31, "Id": "3830", "ExamId": 97, "LeiXing": '4'}, {
-                                "rownum": 32,
-                                "Id": "3831",
-                                "ExamId": 97,
-                                "LeiXing": '4'
-                            }, {"rownum": 33, "Id": "3832", "ExamId": 97, "LeiXing": '4'}
-                        ]
-                    }
-                ];
+                        "rownum": 3,
+                        "Id": "3795",
+                        "ExamId": 96,
+                        "LeiXing": "0",
+                        "LessonId": "331397461"
+                    }, {
+                        "rownum": 4,
+                        "Id": "3796",
+                        "ExamId": 96,
+                        "LeiXing": "0",
+                        "LessonId": "331397461"
+                    }, {
+                        "rownum": 5,
+                        "Id": "3797",
+                        "ExamId": 96,
+                        "LeiXing": "0",
+                        "LessonId": "331397461"
+                    }]
+                }, {
+                    "Type": "1",
+                    "TMBM": [{
+                        "rownum": 6,
+                        "Id": "3798",
+                        "ExamId": 96,
+                        "LeiXing": "1",
+                        "LessonId": "331397461"
+                    }]
+                }, {
+                    "Type": "2",
+                    "TMBM": []
+                }, {
+                    "Type": "3",
+                    "TMBM": []
+                }, {
+                    "Type": "4",
+                    "TMBM": [{
+                        "rownum": 7,
+                        "Id": "3799",
+                        "ExamId": 96,
+                        "LeiXing": "4",
+                        "LessonId": "331397461"
+                    }]
+                }];
                 list.forEach(function (value, index) {
                     value.TMBM.forEach(function (v, i) {
                         v.statClass = 'todo';
@@ -356,17 +376,22 @@
             confirmHandler: function () {
                 var _this = this;
                 var c = _this.curItem;
+                var param = {};
                 _this.showAnalysis = true;
                 c.hasDone = true;
+                param.LessonId = c.LessonId;
+                param.examDetailId = c.Id;
+                param.Chapter = c.ExamId;
                 switch (c.LeiXing) {
-                    case  '0':
+                    case '0':
                         if (c.correctAnswer[0].val === c.selectedOption) {
                             c.statClass = 'correct';
                         } else {
                             c.statClass = 'wrong';
                         }
+                        param.WrongAnswer = JSON.stringify(c.selectedOption);
                         break;
-                    case  '1':
+                    case '1':
                         var flag = false;
                         if (c.correctAnswer.length === c.selectedOption.length) {
                             if (
@@ -382,73 +407,79 @@
                         } else {
                             c.statClass = 'wrong';
                         }
+                        param.WrongAnswer = JSON.stringify(c.selectedOption);
                         break;
                     case '2':
+                        param.WrongAnswer = JSON.stringify(c.selectedOption);
                         break;
-                    case  '3':
+                    case '3':
                         c.statClass = 'correct';
+                        param.WrongAnswer = '';
                         break;
-                    case  '4':
+                    case '4':
                         c.statClass = 'correct';
+                        param.WrongAnswer = '';
                         break;
                 }
-
+                param.CreateType = c.statClass === 'correct' ? 3 : 1;
+                _this.insertHistory(param);
             },
             submitHandler: function () {
                 var _this = this;
                 var totalTime = (new Date().getTime() - _this.initTime) / 60000;
+                this.hasSubmit = true;
             },
             getTopicData: function () {
-                var data = {
-                    "data": [{
+                var res = [
+                    {
                         "rownum": "1",
-                        "Title": "工作分析的出发点是从岗位出发分析其内容、性质、关系、环境以及任职资格等，而不是分析在岗的人员如何。这一工作分析的原则称为(    )",
+                        "Title": "1895年，日本迫使清朝政府签订的不平等条约是",
                         "LeiXing": "0",
-                        "Analysis": "我是题目解析",
-                        "Answer": "我是答案",
-                        "Id": "8186",
-                        "Options": "岗位原则 ",
-                        "IsRight": "1",
-                        "ExamId": "97"
+                        "Analysis": "",
+                        "Answer": "",
+                        "Id": "41",
+                        "Options": "《南京条约》",
+                        "IsRight": "0",
+                        "ExamId": "1",
+                        "LessonId": "240262"
                     }, {
                         "rownum": "2",
-                        "Title": "工作分析的出发点是从岗位出发分析其内容、性质、关系、环境以及任职资格等，而不是分析在岗的人员如何。这一工作分析的原则称为(    )",
+                        "Title": "1895年，日本迫使清朝政府签订的不平等条约是",
                         "LeiXing": "0",
-                        "Analysis": "我是题目解析",
-                        "Answer": "我是答案",
-                        "Id": "8187",
-                        "Options": "目的原则 ",
+                        "Analysis": "",
+                        "Answer": "",
+                        "Id": "42",
+                        "Options": "《天津条约》",
                         "IsRight": "0",
-                        "ExamId": "97"
+                        "ExamId": "1",
+                        "LessonId": "240262"
                     }, {
                         "rownum": "3",
-                        "Title": "工作分析的出发点是从岗位出发分析其内容、性质、关系、环境以及任职资格等，而不是分析在岗的人员如何。这一工作分析的原则称为(    )",
+                        "Title": "1895年，日本迫使清朝政府签订的不平等条约是",
                         "LeiXing": "0",
-                        "Analysis": "我是题目解析",
-                        "Answer": "我是答案",
-                        "Id": "8188",
-                        "Options": "应用原则  ",
-                        "IsRight": "0",
-                        "ExamId": "97"
+                        "Analysis": "",
+                        "Answer": "",
+                        "Id": "43",
+                        "Options": "《马关条约》",
+                        "IsRight": "1",
+                        "ExamId": "1",
+                        "LessonId": "240262"
                     }, {
                         "rownum": "4",
-                        "Title": "工作分析的出发点是从岗位出发分析其内容、性质、关系、环境以及任职资格等，而不是分析在岗的人员如何。这一工作分析的原则称为(    )",
+                        "Title": "1895年，日本迫使清朝政府签订的不平等条约是",
                         "LeiXing": "0",
-                        "Analysis": "我是题目解析",
-                        "Answer": "我是答案",
-                        "Id": "8189",
-                        "Options": "科学原则",
+                        "Analysis": "",
+                        "Answer": "",
+                        "Id": "44",
+                        "Options": "《辛丑条约》",
                         "IsRight": "0",
-                        "ExamId": "97"
-                    }],
-                    "message": "",
-                    "errorCode": "",
-                    "success": "true"
-                };
-                return data;
+                        "ExamId": "1",
+                        "LessonId": "240262"
+                    }
+                ];
+                return res;
             },
             insertHistory: function (data) {
-
             },
             toggleCollection: function () {
                 var _this = this;
@@ -463,10 +494,23 @@
                     })
                 } else {
                     c.hasCollected = !c.hasCollected;
+                    ELEMENT.Message.success('收藏成功');
                 }
             },
             checkScore: function () {
 
+            },
+            collectTopic: function () {
+                var _this = this;
+                var c = _this.curItem;
+            },
+            cancelCollect: function () {
+                var _this = this;
+                var c = _this.curItem;
+            },
+            getLoadingData: function (param) {
+                var rtn = [];
+                return rtn;
             }
         },
         filters: {
@@ -476,16 +520,16 @@
                     case '0':
                         rtn = '单选题';
                         break;
-                    case  '1':
+                    case '1':
                         rtn = '多选题';
                         break;
-                    case  '2':
+                    case '2':
                         rtn = '判断题';
                         break;
-                    case  '3':
+                    case '3':
                         rtn = '填空题';
                         break;
-                    case  '4':
+                    case '4':
                         rtn = '简答题';
                         break;
                 }
@@ -493,13 +537,37 @@
             },
             toCharCode: function (val) {
                 return val.map(function (v) {
-                    return String.fromCharCode(v.idx + 65);
+                    return String.fromCharCode(+v.idx + 65);
                 }).toString();
             }
         },
         created: function () {
+            var param = {};
+            if (getUrlParms('flag') === '') {
+
+            } else if (getUrlParms('flag') === 'his') {
+                this.historyMode = true;
+                param = {
+                    examId: getUrlParms('examId')
+                };
+                this.loadTopicData(param);
+            } else {
+                if (getUrlParms('flag') === 'type') {
+                    param.url = "getTypeofquestion";
+                    param.data = {
+                        lessonId: getUrlParms('lessonId'),
+                        leiXing: getUrlParms('leiXing')
+                    };
+                } else if (getUrlParms('flag') === 'exam') {
+                    param.url = "getCoilingQuestions";
+                    param.data = {examId: getUrlParms('examId')};
+                }
+                this.initTime = new Date().getTime();
+                this.getTopicList(param);
+                this.getTopicDetail(this.topicList[0].TMBM[0]);
+            }
             this.initTime = new Date().getTime();
-            this.getTopicList();
+            this.getTopicList(param);
             this.getTopicDetail(this.topicList[0].TMBM[0]);
         }
     }).$mount('#app');
