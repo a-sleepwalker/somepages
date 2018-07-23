@@ -163,27 +163,14 @@
                 </div>
             </el-tab-pane>
             <el-tab-pane label="常见问题" name="qa">
-                <div v-if="liveCourse">
+                <div v-if="qaList.length>0">
                     <el-collapse accordion>
-                        <el-collapse-item>
+                        <el-collapse-item v-for="(item,index) in qaList" :key="index">
                             <template slot="title">
-                                <h3></h3>
+                                <span class="qa-item-icon">Q{{index+1}}</span>
+                                {{item.question}}
                             </template>
-                            <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-                            <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-                        </el-collapse-item>
-                        <el-collapse-item title="反馈 Feedback">
-                            <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-                            <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
-                        </el-collapse-item>
-                        <el-collapse-item title="效率 Efficiency">
-                            <div>简化流程：设计简洁直观的操作流程；</div>
-                            <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-                            <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
-                        </el-collapse-item>
-                        <el-collapse-item title="可控 Controllability">
-                            <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
-                            <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
+                            <p>{{item.text}}</p>
                         </el-collapse-item>
                     </el-collapse>
                 </div>
@@ -250,7 +237,19 @@
                         replay: '1'
                     },
                 ],
-                sectionList: []
+                sectionList: [],
+                qaList:[
+                    {question:'新报名学员如何找到班主任？',text:'新报名学员，班主任会主动与您进行联系，建议您登录我们的移动官网，您有任何关于课程或者服务的问题都可以与班主任进行直接沟通。'},
+                    {question:'如何快速找到我的课程？',text:'登陆个人中心，点击左边列表中的“课程”选项，在右边的内容栏下可以看到“直播课表”、“重播课表”、“录播课表”；'},
+                    {question:'直播课进不去？',text:'直播未开始的时候，状态显示为“待开始”，此时直播间是无法进入的，只有状态变成“进入教室”之后，才可以进入直播课堂。'},
+                    {question:'直播课表中缺少课程？',text:'首先在重播课表中进行查看，确定缺少的课程是否已经结束了直播；如果重播课表中也买有此项课程，请联系班主任解决。'},
+                    {question:'观看直播课时，视频不流畅？',text:'建议您先检查自己的电脑及网络是否正常，如果正常建议您清除浏览器的缓存后，再次进入直播间。'},
+                    {question:'当天的直播课，为什么晚上没有重播？',text:'重播课需要一定的录制时间，一般在第二天的早上重播课就可以正常观看了。'},
+                    {question:'为什么下载的课件打不开？',text:'下载的课件一般是PDF格式的，您可能没有安装PDF阅读器，导致课件无法打开，建议您先下载阅读器，如果您已下载，可以升级到最新版本。'},
+                    {question:'忘记登录密码怎么办？',text:'学员可在登录页面点击“忘记密码”，进行修改密码操作。'},
+                    {question:'如何更换手机号码？',text:'登陆个人中心，点击用户信息-账户安全中进行修改'},
+                    {question:'收不到验证码怎么办？',text:'收不到验证码可能是手机的信号问题，可以稍等几分钟，再次获取验证码，获取验证码的请求次数超过10次，会有系统提示，只能在第二天再次操作。'}
+                ]
             }
         },
         methods: {

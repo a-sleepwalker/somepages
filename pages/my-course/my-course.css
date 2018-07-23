@@ -280,6 +280,7 @@
   transform: translateY(-105%);
   background: #fff;
   box-shadow: 0 2px 10px 2px #dfdfdf;
+/*========================================================*/
 }
 .course-title-dropdown .dropdown-item {
   padding: 10px;
@@ -300,4 +301,9 @@
 }
 .course-title-dropdown.active {
   transform: translateY(0);
+}
+.qa-item-icon {
+  padding: 2px 5px;
+  background: #f60;
+  color: #fff;
 }
