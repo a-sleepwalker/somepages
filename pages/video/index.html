@@ -53,12 +53,21 @@
                 <div class="tab-container">
                     <el-tabs v-model="activeName" class="tab-item">
                         <el-tab-pane label="公共聊天区" name="chat">
-                            <ul class="chat-list">
-                                <li class="chat-item" v-for="item in chatList" :key="item.id">
-                                    <p class="chat-title">{{item.name}}-{{item.major}}:({{item.classNum}})</p>
-                                    <p class="chat-text">{{item.text}}</p>
-                                </li>
-                            </ul>
+                            <div class="chat-container">
+                                <ul class="chat-list">
+                                    <li class="chat-item" v-for="item in chatList" :key="item.id">
+                                        <p class="chat-title">{{item.name}}-{{item.major}}:({{item.classNum}})</p>
+                                        <p class="chat-text">{{item.text}}</p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="chat-input-container">
+                                <div class="chat-dialog">
+                                    <input type="text" class="chat-input">
+                                    <i class="chat-icon in-bl"></i>
+                                    <a href="javascript:" class="send">发送</a>
+                                </div>
+                            </div>
                         </el-tab-pane>
                         <el-tab-pane label="提问区" name="question" class="tab-item">
                             <ul class="question-list">
@@ -246,71 +255,71 @@
     </div>
 </div>
 <!--<div class="footer">-->
-    <!--<div class="footer-content">-->
-        <!--<div class="footer-top clearfix">-->
-            <!--<div class="attach-brands in-bl">-->
-                <!--<p class="brands-title">旗下品牌</p>-->
-                <!--<div class="brands-content">-->
+<!--<div class="footer-content">-->
+<!--<div class="footer-top clearfix">-->
+<!--<div class="attach-brands in-bl">-->
+<!--<p class="brands-title">旗下品牌</p>-->
+<!--<div class="brands-content">-->
 
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="connect-container in-bl flr">-->
-                <!--<div class="connect-content">-->
-                    <!--<p class="connect-title in-bl">关于我们</p>-->
-                    <!--<div class="connect-link-content in-bl">-->
-                        <!--<a href="#" class="connect-link">新科简介</a>-->
-                        <!--<a href="#" class="connect-link">校区分布</a>-->
-                        <!--<a href="#" class="connect-link">名师风采</a>-->
-                        <!--<a href="#" class="connect-link">新科社区</a>-->
-                        <!--<a href="#" class="connect-link">招贤纳士</a>-->
-                        <!--<a href="#" class="connect-link">加盟合作</a>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="connect-content">-->
-                    <!--<p class="connect-title in-bl">联系我们</p>-->
-                    <!--<div class="connect-link-content in-bl">-->
-                        <!--<a href="#" class="connect-link">联系电话：400-623-6833</a>-->
-                        <!--<a href="#" class="connect-link">QQ:704589929</a>-->
-                        <!--<a href="#" class="connect-link">在线咨询</a>-->
-                        <!--<a href="#" class="connect-link">售后咨询</a>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="connect-content">-->
-                    <!--<p class="connect-title in-bl">新手帮助 </p>-->
-                    <!--<div class="connect-link-content in-bl">-->
-                        <!--<a href="#" class="connect-link">注册流程 </a>-->
-                        <!--<a href="#" class="connect-link">选课流程 </a>-->
-                        <!--<a href="#" class="connect-link">网上报名流程 </a>-->
-                        <!--<a href="#" class="connect-link">网上报名流程 </a>-->
-                        <!--<a href="#" class="connect-link">校区和报名点查询</a>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="footer-bottom">-->
-            <!--<p class="aside-link-title">-->
-                <!--<span class="link-title">友情链接 </span>-->
-                <!--<span class="link-title">热点推荐</span>-->
-            <!--</p>-->
-            <!--<div class="aside-link-content">-->
-                <!--<a href="#" class="aside-link in-bl">拜旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">泰国旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">巴厘岛旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">普吉岛旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">济州岛旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">韩国旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">柬埔寨旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">日本旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">斯里兰卡旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">泰国六日游</a>-->
-                <!--<a href="#" class="aside-link in-bl">长滩岛旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">马尔代夫旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">越南旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">夏威夷旅游</a>-->
-                <!--<a href="#" class="aside-link in-bl">塞班岛旅游</a>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="connect-container in-bl flr">-->
+<!--<div class="connect-content">-->
+<!--<p class="connect-title in-bl">关于我们</p>-->
+<!--<div class="connect-link-content in-bl">-->
+<!--<a href="#" class="connect-link">新科简介</a>-->
+<!--<a href="#" class="connect-link">校区分布</a>-->
+<!--<a href="#" class="connect-link">名师风采</a>-->
+<!--<a href="#" class="connect-link">新科社区</a>-->
+<!--<a href="#" class="connect-link">招贤纳士</a>-->
+<!--<a href="#" class="connect-link">加盟合作</a>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="connect-content">-->
+<!--<p class="connect-title in-bl">联系我们</p>-->
+<!--<div class="connect-link-content in-bl">-->
+<!--<a href="#" class="connect-link">联系电话：400-623-6833</a>-->
+<!--<a href="#" class="connect-link">QQ:704589929</a>-->
+<!--<a href="#" class="connect-link">在线咨询</a>-->
+<!--<a href="#" class="connect-link">售后咨询</a>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="connect-content">-->
+<!--<p class="connect-title in-bl">新手帮助 </p>-->
+<!--<div class="connect-link-content in-bl">-->
+<!--<a href="#" class="connect-link">注册流程 </a>-->
+<!--<a href="#" class="connect-link">选课流程 </a>-->
+<!--<a href="#" class="connect-link">网上报名流程 </a>-->
+<!--<a href="#" class="connect-link">网上报名流程 </a>-->
+<!--<a href="#" class="connect-link">校区和报名点查询</a>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="footer-bottom">-->
+<!--<p class="aside-link-title">-->
+<!--<span class="link-title">友情链接 </span>-->
+<!--<span class="link-title">热点推荐</span>-->
+<!--</p>-->
+<!--<div class="aside-link-content">-->
+<!--<a href="#" class="aside-link in-bl">拜旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">泰国旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">巴厘岛旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">普吉岛旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">济州岛旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">韩国旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">柬埔寨旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">日本旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">斯里兰卡旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">泰国六日游</a>-->
+<!--<a href="#" class="aside-link in-bl">长滩岛旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">马尔代夫旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">越南旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">夏威夷旅游</a>-->
+<!--<a href="#" class="aside-link in-bl">塞班岛旅游</a>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
 <!--</div>-->
 <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
 <script src="https://cdn.bootcss.com/element-ui/2.3.8/index.js"></script>
@@ -429,28 +438,28 @@
                     {id: '1', src: './img/img-src.png', text: '', title: '第二页·第2章', detail: '开学典礼人力资源管理0427'}
                 ],
                 courseList: [
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false},
-                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45',iscur:false}
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false},
+                    {id: '1', name: '《长亭送别》《宝玉挨打》', num: '课时二', time: '10：45', iscur: false}
                 ]
             }
         },
